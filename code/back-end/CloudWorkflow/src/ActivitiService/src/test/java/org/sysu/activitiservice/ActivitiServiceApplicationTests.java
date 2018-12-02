@@ -1,8 +1,6 @@
 package org.sysu.activitiservice;
 
 
-import javafx.animation.Transition;
-import net.sourceforge.sizeof.SizeOf;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
@@ -25,7 +23,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.instrument.Instrumentation;
 import java.util.*;
 
 @RunWith(SpringRunner.class)
@@ -51,7 +48,7 @@ public class ActivitiServiceApplicationTests {
         System.out.println("test");
     }
 
-    @Test
+//    @Test
     public void contextDeploy() {
         long count = repositoryService.createProcessDefinitionQuery().count();
         System.out.println(count);
@@ -81,7 +78,7 @@ public class ActivitiServiceApplicationTests {
     }
 
 
-    @Test
+//    @Test
     public void contextStart() {
 //        long count = repositoryService.createProcessDefinitionQuery().count();
 //        System.out.println(count);
@@ -123,7 +120,7 @@ public class ActivitiServiceApplicationTests {
     /**
      * 测试单个任务的消耗时长是否一致
      */
-    @Test
+//    @Test
     public void testSingleTaskCost() {
         //启动流程leave
         Map<String, Object> variables = new HashMap<String, Object>();
@@ -149,7 +146,7 @@ public class ActivitiServiceApplicationTests {
         System.out.println("完成数：" + historyService.createHistoricProcessInstanceQuery().finished().count());
     }
 
-    @Test
+//    @Test
     public void testLeave() {
         //验证是否有加载到processes下面的流程文件
         System.out.println("ok>>");
@@ -161,23 +158,23 @@ public class ActivitiServiceApplicationTests {
         variables.put("apply", "zhangsan");
         variables.put("approve", "lisi");
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("leave", variables);
-        ProcessInstance processInstance1 = runtimeService.startProcessInstanceByKey("leave", variables);
-        ExecutionEntity executionEntity = (ExecutionEntity) processInstance;
-        ExecutionEntity executionEntity1 = (ExecutionEntity) processInstance1;
-        System.out.println(executionEntity.getActivity());
-        System.out.println(executionEntity1.getActivity());
+//        ProcessInstance processInstance1 = runtimeService.startProcessInstanceByKey("leave", variables);
+//        ExecutionEntity executionEntity = (ExecutionEntity) processInstance;
+//        ExecutionEntity executionEntity1 = (ExecutionEntity) processInstance1;
+//        System.out.println(executionEntity.getActivity());
+//        System.out.println(executionEntity1.getActivity());
 
 
-        System.out.println(SizeOf.humanReadable(SizeOf.deepSizeOf(executionEntity.getActivity())));
-        System.out.println(SizeOf.humanReadable(SizeOf.deepSizeOf(variables)));
-        System.out.println(SizeOf.humanReadable(SizeOf.deepSizeOf(new Integer(0))));
-        System.out.println(SizeOf.humanReadable(SizeOf.deepSizeOf(new Object())));
+//        System.out.println(SizeOf.humanReadable(SizeOf.deepSizeOf(executionEntity.getActivity())));
+//        System.out.println(SizeOf.humanReadable(SizeOf.deepSizeOf(variables)));
+//        System.out.println(SizeOf.humanReadable(SizeOf.deepSizeOf(new Integer(0))));
+//        System.out.println(SizeOf.humanReadable(SizeOf.deepSizeOf(new Object())));
 
-        if(executionEntity.getActivity() == executionEntity1.getActivity()) {
-            System.out.println("equal");
-        } else {
-            System.out.println("no equal");
-        }
+//        if(executionEntity.getActivity() == executionEntity1.getActivity()) {
+//            System.out.println("equal");
+//        } else {
+//            System.out.println("no equal");
+//        }
 
 
         //完成第一步申请
@@ -186,13 +183,13 @@ public class ActivitiServiceApplicationTests {
         Task task1 = taskService.createTaskQuery().processInstanceId(processId).singleResult();
         System.out.println("task1_Id: " + task1.getId());
         System.out.println("task1_Name: " + task1.getName());
-        taskService.complete(task1.getId(), variables);
+        taskService.complete(task1.getId());
 
         //完成第二步请求
         Task task2 = taskService.createTaskQuery().processInstanceId(processId).singleResult();
-        variables.put("pass", true);
-        taskService.complete(task2.getId(), variables);
-
+        Map<String , Object> variables1 = new HashMap<>();
+        variables1.put("pass", 1);
+        taskService.complete(task2.getId(), variables1);
 
         System.out.println("完成数：" + historyService.createHistoricProcessInstanceQuery().finished().count());
     }
@@ -208,7 +205,11 @@ public class ActivitiServiceApplicationTests {
     FileWriter writerForParallelJoinFile= null;
 
 
-    @Test
+    /**
+     * 测试不同的流程结构对应的complete的消耗时长；比如我A任务complete之后对应了一个parallel网关，这人网关后面有5个任务
+     * 则这个complete与其他的complete有什么消耗时长上在的差异吗？毕竟两者的解析逻辑不一样
+     */
+//    @Test
     public void testTaskType() {
         String ifFile = "E:\\workspace\\temp\\complete\\if.txt";
         String paralleSixFile = "E:\\workspace\\temp\\complete\\paralleSixFile.txt";
@@ -243,7 +244,7 @@ public class ActivitiServiceApplicationTests {
         }
     }
 
-    @Test
+//    @Test
     public void _testTaskType() throws IOException {
         long startTime, endTime;
 
@@ -302,7 +303,7 @@ public class ActivitiServiceApplicationTests {
 
     }
 
-    @Test
+//    @Test
     public void testCostTime() {
         String startFile = "E:\\workspace\\temp\\start.txt";
         String completeFile = "E:\\workspace\\temp\\complete.txt";
@@ -528,7 +529,7 @@ public class ActivitiServiceApplicationTests {
     }
 
     //测试将proceddDefinitionEntity从数据库恢复到引擎内存需要花费的时间
-    @Test
+//    @Test
     public void testRecoverProcessDefinitionEntityTime() {
         //试图排除一切初始化工作
         String modelTwo = "processes/2_model.bpmn20.xml";
@@ -558,7 +559,7 @@ public class ActivitiServiceApplicationTests {
         System.out.println("no recover: " + (endTime2 - startTime2));//时间消耗大概是296ms；书本35页也有说到这种缓存带来的性能上的大提升
     }
 
-    @Test
+//    @Test
     public void testRAM() {
         //部署全部文档
 //        String model1 = "processes/1_model.bpmn20.xml";
@@ -674,7 +675,7 @@ public class ActivitiServiceApplicationTests {
 
     //multi instance如何设置的问题，先用instance 为1 就可以了
     //有点问题，需要调试
-    @Test
+//    @Test
     public void testTravelBooking() {
         //验证是否有加载
         long count = repositoryService.createProcessDefinitionQuery().count();

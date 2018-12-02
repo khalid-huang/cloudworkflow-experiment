@@ -33,6 +33,7 @@ public class ActivitiController {
     @RequestMapping(value = "/startProcess/{processModelKey}", method = RequestMethod.POST)
     public ResponseEntity<?> startProcess(@RequestParam(required = false) Map<String, Object> variables,
                                           @PathVariable(value = "processModelKey", required = false) String processModelKey) {
+        System.out.println("processModelKey" + processModelKey);
 
         HashMap<String, String> response = new HashMap<>();
 
@@ -59,6 +60,7 @@ public class ActivitiController {
     /** 获取一个当前可执行的任务 */
     @RequestMapping(value = "getCurrentSingleTask/{processInstanceId}", method = RequestMethod.GET)
     public ResponseEntity<?> getCurrentSingleTask(@PathVariable(value = "processInstanceId", required = false) String processInstanceId) {
+//        System.out.println("processInstanceId:" + processInstanceId);
         HashMap<String, String> response = new HashMap<>();
 
         //校验参数
@@ -112,7 +114,7 @@ public class ActivitiController {
     @RequestMapping(value = "getCurrentTasksOfAssignee/{processInstanceId}", method = RequestMethod.GET)
     public ResponseEntity<?> getCurrentTasksOfAssignee(@RequestParam(value = "assignee", required = false) String assignee,
                                                        @PathVariable(value = "processInstanceId", required = false) String processInstanceId) {
-        System.out.println("getCurrentTaskAssignee:" + assignee);
+//        System.out.println("getCurrentTaskAssignee:" + assignee);
         HashMap<String, String> response = new HashMap<>();
 
         //校验参数
@@ -190,7 +192,7 @@ public class ActivitiController {
         //这里需要对variables做一次JSON反序列化
 
         for(Map.Entry<String, Object> entry : variables.entrySet()) {
-            System.out.println("key = " + entry.getKey() + ", value = " + entry.getValue());
+//            System.out.println("key = " + entry.getKey() + ", value = " + entry.getValue());
             //需不需要做，需要做个验证才知道
             variables.put(entry.getKey(), JSON.parseObject((String)entry.getValue(), Object.class));
         }
@@ -204,7 +206,7 @@ public class ActivitiController {
         response.put("newWorkItemNumber", temp.get("newWorkItemNumber"));
         response.put("isEnded", activitiService.isEnded(processInstanceId) ? "1" : "0");
         logger.info(response.toString());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(JSON.toJSONString(response));
+        return ResponseEntity.status(HttpStatus.OK).body(JSON.toJSONString(response));
     }
 
 }
