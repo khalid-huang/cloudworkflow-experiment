@@ -1,0 +1,10 @@
+{
+  "simulation": "activitidatabase.ThroughtSimulation",
+  "simulationId": "throughtsimulation",
+  "start": 1543672580513,
+  "description": "",
+  "scenarios": ["online shopping"],
+  "assertions": [
+
+  ]
+}
