@@ -3,19 +3,29 @@ package org.sysu.nameservice;
 import com.alibaba.fastjson.JSON;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.sysu.nameservice.service.ActivitiService;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class NameServiceApplicationTests {
+
+    private static Logger logger = LoggerFactory.getLogger(NameServiceApplicationTests.class);
+
     @Autowired
     ActivitiService activitiService;
 
@@ -41,12 +51,21 @@ public class NameServiceApplicationTests {
         String hotel = "1";
         String flight = "0";
         String car = "1";
+        Date start = new Date();
         simulationTravelBooking(traveler, hotel, flight, car);
+        Date end = new Date();
+        logger.info("流程实例执行时间：{} ms", end.getTime()-start.getTime());
+
     }
+
+    // 测试删除服务器
+    static final CountDownLatch INSTANCE_COUNT = new CountDownLatch(300);
 
     @SuppressWarnings("unchecked")
     private void simulationTravelBooking(String traveler, String hotel, String flight, String car) throws Exception {
-        //
+        activitiService.serverGroupGarbageCollection();
+//        activitiService.deleteServerFromServerGroup();
+
 //        //启动流程:
         Map<String, Object> variables = new HashMap<String, Object>();
         Map<String, Object> subVariables = new HashMap<String, Object>();
@@ -163,5 +182,6 @@ public class NameServiceApplicationTests {
 
 //        //判断是否完成
 //        System.out.println(historyService.createHistoricProcessInstanceQuery().finished().count());
+        INSTANCE_COUNT.await();
     }
 }

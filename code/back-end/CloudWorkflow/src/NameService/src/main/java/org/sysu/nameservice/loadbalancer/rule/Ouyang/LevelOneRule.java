@@ -29,7 +29,7 @@ public class LevelOneRule extends AbstractLoadBalancerRule {
         setLoadBalancer(lb);
     }
 
-    public Server choose(ILoadBalancer lb, Object key) {
+    public Server levelOneRuleChoose(ILoadBalancer lb, Object key) {
         if(lb == null) {
             logger.warn("no load balancer");
             return null;
@@ -50,7 +50,7 @@ public class LevelOneRule extends AbstractLoadBalancerRule {
 
             AbstractLoadBalancer nlb = (AbstractLoadBalancer) lb;
             LoadBalancerStats stats = nlb.getLoadBalancerStats();
-            server = _choose(reachableServers, stats);
+            server = levelOneRule_choose(reachableServers, stats);
             if(server == null) {
                 Thread.yield();
                 continue;
@@ -64,11 +64,10 @@ public class LevelOneRule extends AbstractLoadBalancerRule {
             logger.warn("No available alive servers after 10 tries from load balancer: " + lb);
         }
         return server;
-
     }
 
     //LoadBalancerStats里面维护了server与Stats的对应关系，根据server获取其stats，而对于stats中有MultiTimeSlot的信息就可以了
-    private Server _choose(List<Server> reachableServer, LoadBalancerStats stats) {
+    private Server levelOneRule_choose(List<Server> reachableServer, LoadBalancerStats stats) {
         if(stats == null) {
             logger.warn("no statistics, nothing to do so");
             return null;
@@ -76,7 +75,7 @@ public class LevelOneRule extends AbstractLoadBalancerRule {
         Server result = null;
         int minBusyness = Integer.MAX_VALUE;
         for(Server server : reachableServer) {
-            BusynessIndicatorForLevelOneServerStats ss = (BusynessIndicatorForLevelOneServerStats)  stats.getSingleServerStat(server);
+            BusynessIndicatorForLevelOneServerStats ss = (BusynessIndicatorForLevelOneServerStats)stats.getSingleServerStat(server);
             int tempBusyness = ss.getBusyness();
             if(minBusyness > tempBusyness) {
                 minBusyness = tempBusyness;
@@ -88,7 +87,7 @@ public class LevelOneRule extends AbstractLoadBalancerRule {
 
     @Override
     public Server choose(Object key) {
-        return choose(getLoadBalancer(), key);
+        return levelOneRuleChoose(getLoadBalancer(), key);
     }
 
 
