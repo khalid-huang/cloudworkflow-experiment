@@ -1,4 +1,13 @@
-package activitidatabase.process
+//先定义leave process流程模型每个任务的rtl级别
+// 
+//  task-name          rtl-level
+//     start                 /
+//    提交申请               2
+//    经理审核               1
+//    修改申请               2
+//     end                   /
+
+package activitiadmissiondatabase.process
 
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
@@ -23,7 +32,8 @@ object Process_LeaveModel_PASS {
 		// }
 		.exec(http("completeTask")
 			.post("completeTask/${processInstanceId}/${taskId}")
-			.headers(contentType))
+			.headers(contentType)
+            .formParam("rtl", "2"))
 		.pause(2)
 		.exec(http("getCurrentSingleTask")
 			.get("getCurrentSingleTask/${processInstanceId}")
@@ -32,6 +42,7 @@ object Process_LeaveModel_PASS {
 		.exec(http("completeTask")
 			.post("completeTask/${processInstanceId}/${taskId}")
 			.headers(contentType)
-			.formParam("pass", "1"))		
+			.formParam("pass", "1")
+            .formParam("rtl", "1"))		
 		.pause(1) //流程结束
 }

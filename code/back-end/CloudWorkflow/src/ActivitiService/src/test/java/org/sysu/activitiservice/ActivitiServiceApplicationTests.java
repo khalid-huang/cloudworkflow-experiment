@@ -198,6 +198,7 @@ public class ActivitiServiceApplicationTests {
     FileWriter writerForParallelSixFile  = null; //记录一个会推动一个并行网关的请求的时间
     FileWriter writerForLoopFile = null;
     FileWriter writerForParallelJoinFile= null;
+    FileWriter writerForGetCurrentTask = null;
 
 
     @Test
@@ -208,6 +209,7 @@ public class ActivitiServiceApplicationTests {
         String loopFile = "E:\\workspace\\temp\\complete\\loop.txt";
         String taskNoNeedToPush = "E:\\workspace\\temp\\complete\\taskNoNeedToPush.txt";
         String taskNeedToPush = "E:\\workspace\\temp\\complete\\taskNeedToPush.txt";
+        String getCurrentTask = "E:\\workspace\\temp\\complete\\getCurrentTask.txt";
         try {
             writerForIfFile = new FileWriter(ifFile);
             writerForSequenceFile = new FileWriter(sequenceFile);
@@ -215,7 +217,8 @@ public class ActivitiServiceApplicationTests {
             writeForTaskNoNeedToPush = new FileWriter(taskNoNeedToPush);
             writerForLoopFile = new FileWriter(loopFile);
             writerForParallelJoinFile = new FileWriter(taskNeedToPush);
-            int testTime = 120;
+            writerForGetCurrentTask = new FileWriter(getCurrentTask);
+            int testTime = 60;
 
             ProcessInstance temp = runtimeService.startProcessInstanceByKey("load-application");
 
@@ -230,6 +233,7 @@ public class ActivitiServiceApplicationTests {
             writerForIfFile.close();
             writerForSequenceFile.close();
             writerForParallelJoinFile.close();
+            writerForGetCurrentTask.close();
         } catch (IOException e) {
 
         }
@@ -249,7 +253,11 @@ public class ActivitiServiceApplicationTests {
         endTime = System.currentTimeMillis();
         writerForIfFile.write("" + (endTime - startTime) + "\r\n");
 
+        startTime = System.currentTimeMillis();
         Task task2 = taskService.createTaskQuery().processInstanceId(pi.getId()).singleResult();
+        endTime = System.currentTimeMillis();
+        writerForGetCurrentTask.write("" + (endTime - startTime) + "\r\n");
+
 //        System.out.println(task2.getName());
         startTime = System.currentTimeMillis();
         taskService.complete(task2.getId());
@@ -280,7 +288,10 @@ public class ActivitiServiceApplicationTests {
 
         taskService.complete(taskService.createTaskQuery().processInstanceId(pi.getId()).singleResult().getId());
 
+        startTime = System.currentTimeMillis();
         Task task9 = taskService.createTaskQuery().processInstanceId(pi.getId()).singleResult();
+        endTime = System.currentTimeMillis();
+        writerForGetCurrentTask.write("" + (endTime - startTime) + "\r\n");
 
         startTime = System.currentTimeMillis();
         taskService.complete(task9.getId());

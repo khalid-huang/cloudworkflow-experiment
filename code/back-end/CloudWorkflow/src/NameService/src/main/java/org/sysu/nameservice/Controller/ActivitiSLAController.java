@@ -4,30 +4,29 @@ import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.sysu.nameservice.service.ActivitiService;
 import org.sysu.nameservice.util.CommonUtil;
 
-import javax.xml.ws.Response;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestController
-public class ActivitiController {
+@Controller
+@RequestMapping("rtl")
+public class ActivitiSLAController {
     @Autowired
     ActivitiService activitiService;
 
-
-
     @RequestMapping(value = "startProcess/{processModelKey}", method = RequestMethod.POST)
-    public ResponseEntity<?> startProcess(@RequestBody(required = false)Map<String, Object> data,
+    public ResponseEntity<?> startProcess(@RequestBody(required = false) Map<String, Object> data,
                                           @PathVariable(value = "processModelKey", required = false) String processModelKey) {
         HashMap<String, String> response = new HashMap<>();
 
         //做参数校验
         ArrayList<String> missingParams = new ArrayList<>();
-        if(data == null) missingParams.add("data ");
+        if(data == null) missingParams.add("data");
         if(processModelKey == null) missingParams.add("processModelKey");
         if(missingParams.size() > 0) {
             response.put("status", "fail");
@@ -133,32 +132,6 @@ public class ActivitiController {
         return ResponseEntity.status(HttpStatus.OK).body(JSON.toJSONString(response));
     }
 
-    @RequestMapping(value = "claimTask/{processInstanceId}/{taskId}", method = RequestMethod.POST)
-    public ResponseEntity<?> claimTask(@RequestBody(required = false) Map<String, Object> data,
-                                       @PathVariable(value = "processInstanceId", required = false) String processInstanceId,
-                                       @PathVariable(value = "taskId", required = false) String taskId) {
-        HashMap<String, String> response = new HashMap<>();
-        //参数校验
-        ArrayList<String> missingParams = new ArrayList<>();
-        if(taskId == null) missingParams.add("taskId");
-        if(processInstanceId == null) missingParams.add("processInstanceId");
-        if(data == null) missingParams.add("data");
-        if(missingParams.size() > 0) {
-            response.put("status", "fail");
-            response.put("message", "required parameters missing: " + CommonUtil.ArrayList2String(missingParams, " "));
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(JSON.toJSONString(response));
-        }
-        try {
-            String responseString = activitiService.claimTask((String)data.get("assignee"), processInstanceId, taskId);
-            response.put("status", "success");
-            response.put("response", responseString);
-        } catch (Exception e) {
-            response.put("status", "fail");
-            response.put("message", e.toString());
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(JSON.toJSONString(response));
-    }
-
     @RequestMapping(value = "completeTask/{processInstanceId}/{taskId}", method = RequestMethod.POST)
     public ResponseEntity<?> completeTask(@RequestBody(required = false) Map<String, Object> data,
                                           @PathVariable(value = "processInstanceId", required = false) String processInstanceId,
@@ -185,5 +158,4 @@ public class ActivitiController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(JSON.toJSONString(response));
     }
-
 }

@@ -204,7 +204,7 @@ public class ActivitiController {
         response.put("newWorkItemNumber", temp.get("newWorkItemNumber"));
         response.put("isEnded", activitiService.isEnded(processInstanceId) ? "1" : "0");
         logger.info(response.toString());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(JSON.toJSONString(response));
+        return ResponseEntity.status(HttpStatus.OK).body(JSON.toJSONString(response));
     }
 
 }

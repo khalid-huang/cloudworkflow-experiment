@@ -1,0 +1,10 @@
+{
+  "simulation": "activitidatabase.AdimissionLayerSimulation",
+  "simulationId": "adimissionlayersimulation",
+  "start": 1543979458757,
+  "description": "",
+  "scenarios": ["leave pass", "online shopping"],
+  "assertions": [
+
+  ]
+}

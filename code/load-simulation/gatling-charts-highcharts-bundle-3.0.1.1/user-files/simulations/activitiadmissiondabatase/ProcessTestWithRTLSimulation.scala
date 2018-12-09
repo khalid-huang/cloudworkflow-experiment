@@ -1,11 +1,11 @@
-package activitidatabase
+package activitiadmissiondatabase
 
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import scala.concurrent.duration._
-import activitidatabase.process._
+import activitiadmissiondatabase.process._
 
-class ProcessTestSimulation extends 
+class ProcessTestWithRTLSimulation extends 
 Simulation {
 	val httpConf = http
 		.baseUrl("http://localhost:8771/")
@@ -44,7 +44,7 @@ Simulation {
 
 	def process_onlineshoppingmodel() {
 		var onlineshopping = scenario("online shopping").exec(Process_OnlineShoppingModel.workflow)
-		setUp(onlineshopping.inject(atOnceUsers(20)).protocols(httpConf))
+		setUp(onlineshopping.inject(atOnceUsers(1)).protocols(httpConf))
 	}
 
 	// basictest()
