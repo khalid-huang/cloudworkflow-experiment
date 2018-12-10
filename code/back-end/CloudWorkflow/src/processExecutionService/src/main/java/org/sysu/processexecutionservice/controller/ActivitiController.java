@@ -76,8 +76,9 @@ public class ActivitiController {
     }
 
     //完成任务
-    @RequestMapping(value = "completeTask/{processInstanceId}/{taskId}", method = RequestMethod.POST)
-    public ResponseEntity<?> completeTask(@RequestParam(required = false) Map<String, Object> variables, @PathVariable(value = "processInstanceId", required = false) String processInstanceId ,@PathVariable(value = "taskId", required = false) String taskId) {
+    @RequestMapping(value = "completeTask/{processDefinitionId}/{processInstanceId}/{taskId}", method = RequestMethod.POST)
+    public ResponseEntity<?> completeTask(@RequestParam(required = false) Map<String, Object> variables, 
+        @PathVariable(value = "processDefinitionId", required = false) String processDefinitionId, @PathVariable(value = "processInstanceId", required = false) String processInstanceId ,@PathVariable(value = "taskId", required = false) String taskId) {
 
         HashMap<String, String> response = new HashMap<>();
 
@@ -85,6 +86,7 @@ public class ActivitiController {
         ArrayList<String> missingParams = new ArrayList<>();
         if (variables == null) missingParams.add("variables");
         if (processInstanceId == null) missingParams.add("processInstanceId");
+        if (processDefinitionId == null) missingParams.add("processDefinitionId");
         if (taskId == null) missingParams.add("taskId");
         if (missingParams.size() > 0) {
             response.put("status", "fail");
