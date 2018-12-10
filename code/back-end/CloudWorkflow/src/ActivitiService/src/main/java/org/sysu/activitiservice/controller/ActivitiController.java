@@ -30,8 +30,8 @@ public class ActivitiController {
     private TaskService taskService;
 
     //启动指定流程
-    @RequestMapping(value = "/startProcess/{processModelKey}", method = RequestMethod.POST)
-    public ResponseEntity<?> startProcess(@RequestParam(required = false) Map<String, Object> variables,
+    @RequestMapping(value = "/startProcessInstanceByKey/{processModelKey}", method = RequestMethod.POST)
+    public ResponseEntity<?> startProcessInstanceByKey(@RequestParam(required = false) Map<String, Object> variables,
                                           @PathVariable(value = "processModelKey", required = false) String processModelKey) {
 
         HashMap<String, String> response = new HashMap<>();
@@ -51,6 +51,34 @@ public class ActivitiController {
         ProcessInstance pi =  activitiService.startProcessInstanceByKey(processModelKey, variables);
         response.put("status", "success");
         response.put("message", "start process " + processModelKey + " success");
+        response.put("processInstanceId", pi.getId());
+        response.put("processDefinitionId", pi.getProcessDefinitionId());
+        logger.info(response.toString());
+        return ResponseEntity.status(HttpStatus.OK).body(JSON.toJSONString(response));
+    }
+
+    //启动指定流程
+    @RequestMapping(value = "/startProcessInstanceById/{processInstanceId}", method = RequestMethod.POST)
+    public ResponseEntity<?> startProcessInstanceById(@RequestParam(required = false) Map<String, Object> variables,
+                                          @PathVariable(value = "processInstanceId", required = false) String processInstanceId) {
+
+        HashMap<String, String> response = new HashMap<>();
+
+        //做参数校验
+        ArrayList<String> missingParams = new ArrayList<>();
+        if(variables == null) missingParams.add("variables");
+        if(processInstanceId == null) missingParams.add("processInstanceId");
+        if(missingParams.size() > 0) {
+            response.put("status", "fail");
+            response.put("message", "required parameters missing: " + CommonUtil.ArrayList2String(missingParams, " "));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(JSON.toJSONString(response));
+        }
+
+        //启动流程
+//        ProcessInstance pi =  runtimeService.startProcessInstanceById(processInstanceId, variables);
+        ProcessInstance pi =  activitiService.startProcessInstanceById(processInstanceId, variables);
+        response.put("status", "success");
+        response.put("message", "start process " + processInstanceId + " success");
         response.put("processInstanceId", pi.getId());
         response.put("processDefinitionId", pi.getProcessDefinitionId());
         logger.info(response.toString());

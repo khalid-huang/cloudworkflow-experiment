@@ -22,8 +22,8 @@ public class ActivitiController {
     ActivitiService activitiService;
 
     //启动指定流程
-    @RequestMapping(value = "/startProcess/{processModelKey}", method = RequestMethod.POST)
-    public ResponseEntity<?> startProcess(@RequestParam(required = false) Map<String, Object> variables,
+    @RequestMapping(value = "/startProcessInstanceByKey/{processModelKey}", method = RequestMethod.POST)
+    public ResponseEntity<?> startProcessInstanceByKey(@RequestParam(required = false) Map<String, Object> variables,
                                           @PathVariable(value = "processModelKey", required = false) String processModelKey) {
 
         HashMap<String, String> response = new HashMap<>();
@@ -39,7 +39,28 @@ public class ActivitiController {
         }
 
         //启动流程
-        return activitiService.startProcess(variables, processModelKey);
+        return activitiService.startProcessInstanceByKey(variables, processModelKey);
+    }
+
+    //启动指定流程
+    @RequestMapping(value = "/startProcessInstanceById/{processDefinitionId}", method = RequestMethod.POST)
+    public ResponseEntity<?> startProcessInstanceById(@RequestParam(required = false) Map<String, Object> variables,
+                                          @PathVariable(value = "processDefinitionId", required = false) String processDefinitionId) {
+
+        HashMap<String, String> response = new HashMap<>();
+
+        //参数校验
+        ArrayList<String> missingParams = new ArrayList<>();
+        if(variables == null) missingParams.add("variables");
+        if(processDefinitionId == null) missingParams.add("processDefinitionId ");
+        if(missingParams.size() > 0) {
+            response.put("status", "fail");
+            response.put("message", "required parameters  missing: " + CommonUtil.ArrayList2String(missingParams, " "));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(JSON.toJSONString(response));
+        }
+
+        //启动流程
+        return activitiService.startProcessInstanceById(variables, processDefinitionId);
     }
 
     /** 获取一个当前可执行的任务 */
@@ -95,6 +116,6 @@ public class ActivitiController {
         }
 
 //        return activitiService.completeTask(variables, processInstanceId, taskId);
-        return activitiService.completeTaskWithCallback(variables, processInstanceId, taskId);
+        return activitiService.completeTaskWithFutureTask(variables, processInstanceId, taskId);
     }
 }

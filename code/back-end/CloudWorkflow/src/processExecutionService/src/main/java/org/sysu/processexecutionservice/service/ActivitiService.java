@@ -40,8 +40,14 @@ public class ActivitiService {
         return result;
     }
 
-    public ResponseEntity<?> startProcess(Map<String, Object> variables, String processModelKey) {
-        String url = "http://" + this.activitiStartService + "/startProcess/" + processModelKey;
+    public ResponseEntity<?> startProcessInstanceByKey(Map<String, Object> variables, String processModelKey) {
+        String url = "http://" + this.activitiStartService + "/startProcessInstanceByKey/" + processModelKey;
+        ResponseEntity<String> result = restTemplate.postForEntity(url, variables, String.class);
+        return result;
+    }
+
+    public ResponseEntity<?> startProcessInstanceById(Map<String, Object> variables, String processDefinitionId) {
+        String url = "http://" + this.activitiStartService + "/startProcessInstanceById/" + processDefinitionId;
         ResponseEntity<String> result = restTemplate.postForEntity(url, variables, String.class);
         return result;
     }
@@ -61,7 +67,7 @@ public class ActivitiService {
         return ResponseEntity.ok("请求正在调度中");
     }
 //    异步处理，返回客户端结果
-    public ResponseEntity<?> completeTaskWithCallback(Map<String, Object> variables, String processInstanceId, String taskId) {
+    public ResponseEntity<?> completeTaskWithFutureTask(Map<String, Object> variables, String processInstanceId, String taskId) {
         String url = "http://" + this.activitiExecutionService + "/completeTask/" + processInstanceId + "/" + taskId;
 //      取出rtl
         String rtl = (String) variables.get("rtl");

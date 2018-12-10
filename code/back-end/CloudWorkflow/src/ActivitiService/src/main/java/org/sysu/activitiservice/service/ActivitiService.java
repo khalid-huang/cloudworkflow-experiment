@@ -30,6 +30,10 @@ public class ActivitiService {
         return runtimeService.startProcessInstanceByKey(processModelKey, variables);
     }
 
+    public ProcessInstance startProcessInstanceById(String processInstanceId, Map<String,Object> variables) {
+        return runtimeService.startProcessInstanceById(processInstanceId, variables);
+    }
+
     /** 根据流程实例获取当前任务列表 */
     public List<Task> getCurrentTasks(String processInstancedId) {
         return taskService.createTaskQuery().processInstanceId(processInstancedId).list();
