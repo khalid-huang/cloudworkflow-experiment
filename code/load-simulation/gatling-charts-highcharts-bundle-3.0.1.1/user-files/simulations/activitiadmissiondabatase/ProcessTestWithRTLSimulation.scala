@@ -51,7 +51,7 @@ Simulation {
 
 	// basictest()
 	// process_leavemodel_pass()
-	// process_leavemodel_notpass()
-	process_onlineshoppingmodel()
+	process_leavemodel_notpass()
+	// process_onlineshoppingmodel()
 
 }

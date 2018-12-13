@@ -7,7 +7,7 @@ import scala.concurrent.duration._
 import activitiadmissiondatabase.process._
 
 class AdmisstionLoadWithRTLSimulation extends Simulation {
-    var httpConf = http.baseUrl("http://localhost:8763/")
+    var httpConf = http.baseUrl("http://localhost:8771/")
 
 // 这种情况下start占了complete的1/3
     def admissionLayerWithThreeModel() {
@@ -30,17 +30,17 @@ class AdmisstionLoadWithRTLSimulation extends Simulation {
             ),
             onlineShopping.inject(
                 nothingFor(5 seconds),
-                rampUsers(20) during (5 seconds),
+                rampUsers(10) during (5 seconds),
                 nothingFor(2 seconds),
-                atOnceUsers(40),
-                rampUsers(20) during (5 seconds),
+                atOnceUsers(20),
+                rampUsers(5) during (5 seconds),
                 nothingFor(2 seconds),
                 atOnceUsers(30),
-                rampUsers(40) during (5 seconds),
-                nothingFor(5 seconds),
                 rampUsers(20) during (5 seconds),
                 nothingFor(5 seconds),
-                atOnceUsers(60),
+                rampUsers(15) during (5 seconds),
+                nothingFor(5 seconds),
+                atOnceUsers(15)
             )
         ).protocols(httpConf)
     }
@@ -61,27 +61,32 @@ class AdmisstionLoadWithRTLSimulation extends Simulation {
             )
             ,
             leavePass.inject(
-                constantUsersPerSec(3) during (60 seconds)
+                constantUsersPerSec(2) during (60 seconds)
             ),
             leaveNotPass.inject(
                 nothingFor(5 seconds),
-                rampUsers(20) during (5 seconds),
+                atOnceUsers(20),
+                rampUsers(10) during (5 seconds),
                 nothingFor(2 seconds),
-                atOnceUsers(40),
-                rampUsers(20) during (5 seconds),
+                atOnceUsers(20),
+                rampUsers(5) during (5 seconds),
                 nothingFor(2 seconds),
                 atOnceUsers(30),
-                rampUsers(40) during (5 seconds),
-                nothingFor(5 seconds),
                 rampUsers(20) during (5 seconds),
                 nothingFor(5 seconds),
-                atOnceUsers(60),
+                rampUsers(15) during (5 seconds),
+                nothingFor(5 seconds),
+                atOnceUsers(15)
             )
         ).protocols(httpConf)
     }
 
 // 这中情况下start的数量是complete的1/3左右，不大现实
     // admissionLayerWithThreeModel()
+    //这种比较好
+    admissionLayerWithThreeModel1()
+
+
 
 
 

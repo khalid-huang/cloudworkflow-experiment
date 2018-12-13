@@ -6,9 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.sysu.processexecutionservice.admission.ActivitiExecuteAdmissionor;
 import org.sysu.processexecutionservice.admission.requestcontext.ActivitiExecuteRequestContext;
+import org.sysu.processexecutionservice.util.CommonUtil;
 
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -42,13 +45,16 @@ public class ActivitiService {
 
     public ResponseEntity<?> startProcessInstanceByKey(Map<String, Object> variables, String processModelKey) {
         String url = "http://" + this.activitiStartService + "/startProcessInstanceByKey/" + processModelKey;
-        ResponseEntity<String> result = restTemplate.postForEntity(url, variables, String.class);
+        MultiValueMap<String, Object> valueMap = CommonUtil.map2MultiValueMap(variables);
+        ResponseEntity<String> result = restTemplate.postForEntity(url, valueMap, String.class);
         return result;
     }
 
     public ResponseEntity<?> startProcessInstanceById(Map<String, Object> variables, String processDefinitionId) {
         String url = "http://" + this.activitiStartService + "/startProcessInstanceById/" + processDefinitionId;
-        ResponseEntity<String> result = restTemplate.postForEntity(url, variables, String.class);
+//        封装参数，要使用MultiValueMap，不可以用Map或是HashMap
+        MultiValueMap<String, Object> valueMap = CommonUtil.map2MultiValueMap(variables);
+        ResponseEntity<String> result = restTemplate.postForEntity(url, valueMap, String.class);
         return result;
     }
 
@@ -58,7 +64,9 @@ public class ActivitiService {
 //      取出rtl
         String rtl = (String) variables.get("rtl");
         variables.remove("rtl");
-        ActivitiExecuteRequestContext activitiExecuteRequestContext = new ActivitiExecuteRequestContext(rtl, url, variables, this.restTemplate);
+//      封装参数
+        MultiValueMap valueMap = CommonUtil.map2MultiValueMap(variables);
+        ActivitiExecuteRequestContext activitiExecuteRequestContext = new ActivitiExecuteRequestContext(rtl, url, valueMap, this.restTemplate);
 //        同步的处理方式
         this.activitiExecuteAdmissionor.admit(activitiExecuteRequestContext);
 //      主要还是如何处理请求线程和获取响应方式的问题； 如果同步的话，线程会一直占用，而且怎么个获取方法；
@@ -74,7 +82,8 @@ public class ActivitiService {
         String rtl = (String) variables.get("rtl");
         logger.info("complete task with rtl:" + rtl);
         variables.remove("rtl");
-        ActivitiExecuteRequestContext activitiExecuteRequestContext = new ActivitiExecuteRequestContext(rtl, url, variables, this.restTemplate);
+        MultiValueMap<String, Object> valueMap = CommonUtil.map2MultiValueMap(variables);
+        ActivitiExecuteRequestContext activitiExecuteRequestContext = new ActivitiExecuteRequestContext(rtl, url, valueMap, this.restTemplate);
         this.activitiExecuteAdmissionor.admit(activitiExecuteRequestContext);
         try {
             ResponseEntity<?> result = activitiExecuteRequestContext.getFutureTask().get();

@@ -15,8 +15,11 @@ import scala.concurrent.duration._
 
 object Process_LeaveModel_PASS {
     var contentType = Map("Content-Type" -> "application/x-www-form-urlencoded")
-    var workflow = exec(http("startProcessInstanceById")
-			.post("/startProcessInstanceById/leave:9:52536")
+    var workflow =  exec { session =>
+            session.set("processDefinitionId", "leave:9:52536")
+        } 
+		.exec(http("startProcessInstanceById")
+			.post("/startProcessInstanceById/${processDefinitionId}")
 			.headers(contentType)
 			.formParam("apply", "zhangsan")
 			.formParam("approve", "lisi")
@@ -31,7 +34,7 @@ object Process_LeaveModel_PASS {
 		// 	session
 		// }
 		.exec(http("completeTask")
-			.post("completeTask/${processInstanceId}/${taskId}")
+			.post("completeTask/${processDefinitionId}/${processInstanceId}/${taskId}")
 			.headers(contentType)
             .formParam("rtl", "2"))
 		.pause(2)
@@ -40,7 +43,7 @@ object Process_LeaveModel_PASS {
 			.check(jsonPath("$..taskId").saveAs("taskId"))) //获取第二个任务 “经理审批”
 		.pause(1)
 		.exec(http("completeTask")
-			.post("completeTask/${processInstanceId}/${taskId}")
+			.post("completeTask/${processDefinitionId}/${processInstanceId}/${taskId}")
 			.headers(contentType)
 			.formParam("pass", "1")
             .formParam("rtl", "1"))		

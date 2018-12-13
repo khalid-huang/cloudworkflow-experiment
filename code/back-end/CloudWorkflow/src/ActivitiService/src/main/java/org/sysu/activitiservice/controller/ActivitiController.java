@@ -61,6 +61,7 @@ public class ActivitiController {
     @RequestMapping(value = "/startProcessInstanceById/{processDefinitionId}", method = RequestMethod.POST)
     public ResponseEntity<?> startProcessInstanceById(@RequestParam(required = false) Map<String, Object> variables,
                                           @PathVariable(value = "processDefinitionId", required = false) String processDefinitionId) {
+        System.out.println(variables);
 
         HashMap<String, String> response = new HashMap<>();
 

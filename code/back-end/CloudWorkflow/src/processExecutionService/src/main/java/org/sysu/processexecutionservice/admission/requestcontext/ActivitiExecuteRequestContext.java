@@ -1,6 +1,7 @@
 package org.sysu.processexecutionservice.admission.requestcontext;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.sysu.processexecutionservice.admission.ActivitiExecuteAdmissionor;
 
@@ -15,7 +16,7 @@ public class ActivitiExecuteRequestContext implements IRequestContext{
 
     private String url;
 
-    private Map<String, Object> variables;
+    private MultiValueMap<String, Object> variables;
 
     private FutureTask<ResponseEntity<String>> futureTask;
 
@@ -24,7 +25,7 @@ public class ActivitiExecuteRequestContext implements IRequestContext{
 // 开始执行请求的时间
     private long startTime;
 
-    public ActivitiExecuteRequestContext(String rtl, String url, Map<String, Object> variables, RestTemplate restTemplate) {
+    public ActivitiExecuteRequestContext(String rtl, String url, MultiValueMap<String, Object> variables, RestTemplate restTemplate) {
         this.rtl = rtl;
         this.url = url;
         this.variables= variables;
@@ -44,7 +45,7 @@ public class ActivitiExecuteRequestContext implements IRequestContext{
         return url;
     }
 
-    public Map<String, Object> getVariables() {
+    public MultiValueMap<String, Object> getVariables() {
         return variables;
     }
 
@@ -60,7 +61,7 @@ public class ActivitiExecuteRequestContext implements IRequestContext{
         this.url = url;
     }
 
-    public void setVariables(Map<String, Object> variables) {
+    public void setVariables(MultiValueMap<String, Object> variables) {
         this.variables = variables;
     }
 

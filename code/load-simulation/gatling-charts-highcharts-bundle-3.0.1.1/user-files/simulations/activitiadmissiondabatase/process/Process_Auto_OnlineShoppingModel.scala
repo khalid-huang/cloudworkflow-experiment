@@ -19,8 +19,11 @@ import scala.concurrent.duration._
 
 object Process_Auto_OnlineShoppingModel {
     var contentType = Map("Content-Type" -> "application/x-www-form-urlencoded")
-    var workflow = exec(http("startProcessInstanceById")
-            .post("/startProcessInstanceById/online-shopping:9:62538")
+    var workflow = exec { session =>
+            session.set("processDefinitionId", "online-shopping:9:62538")
+        }
+        .exec(http("startProcessInstanceById")
+            .post("/startProcessInstanceById/${processDefinitionId}")
             .headers(contentType)
             .check(jsonPath("$..processInstanceId").saveAs("processInstanceId")))
         .exec(http("getCurrentSingleTask")
@@ -28,7 +31,7 @@ object Process_Auto_OnlineShoppingModel {
 			.check(jsonPath("$..taskId").saveAs("taskId")))
         .pause(2) //模拟外部服务的任务处理时间
         .exec(http("completeTask")   //choose-goods task
-            .post("completeTask/${processInstanceId}/${taskId}")
+            .post("completeTask/${processDefinitionId}/${processInstanceId}/${taskId}")
             .headers(contentType)
             .formParam("rtl", "0"))
         .exec(http("getCurrentSingleTask")
@@ -36,7 +39,7 @@ object Process_Auto_OnlineShoppingModel {
 			.check(jsonPath("$..taskId").saveAs("taskId")))
         .pause(1) //模拟外部服务的任务处理时间
         .exec(http("completeTask")   //pay task
-            .post("completeTask/${processInstanceId}/${taskId}")
+            .post("completeTask/${processDefinitionId}/${processInstanceId}/${taskId}")
             .headers(contentType)
             .formParam("rtl", "0"))
         .exec(http("getCurrentSingleTask")
@@ -44,7 +47,7 @@ object Process_Auto_OnlineShoppingModel {
 			.check(jsonPath("$..taskId").saveAs("taskId")))
         .pause(3) //模拟外部服务的任务处理时间
         .exec(http("completeTask")    //send goods
-            .post("completeTask/${processInstanceId}/${taskId}")
+            .post("completeTask/${processDefinitionId}/${processInstanceId}/${taskId}")
             .headers(contentType)
             .formParam("rtl", "0"))
         .exec(http("getCurrentSingleTask")
@@ -52,7 +55,7 @@ object Process_Auto_OnlineShoppingModel {
 			.check(jsonPath("$..taskId").saveAs("taskId")))
         .pause(1) //模拟外部服务的任务处理时间
         .exec(http("completeTask")  //receive goods 
-            .post("completeTask/${processInstanceId}/${taskId}")
+            .post("completeTask/${processDefinitionId}/${processInstanceId}/${taskId}")
             .headers(contentType)
             .formParam("rtl", "0"))
 }

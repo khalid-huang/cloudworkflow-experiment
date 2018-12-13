@@ -17,8 +17,11 @@ import scala.concurrent.duration._
 object Process_LeaveModel_NOTPASS_N {
     var N = 10 //表示5次审批失败
     var contentType = Map("Content-Type" -> "application/x-www-form-urlencoded")
-    var workflow = exec(http("startProcessInstanceById")
-			.post("/startProcessInstanceById/leave:9:52536")
+    var workflow = exec { session =>
+            session.set("processDefinitionId", "leave:9:52536")
+        } 
+		.exec(http("startProcessInstanceById")
+			.post("/startProcessInstanceById/${processDefinitionId}")
 			.headers(contentType)
 			.formParam("apply", "zhangsan")
 			.formParam("approve", "lisi")
@@ -33,7 +36,7 @@ object Process_LeaveModel_NOTPASS_N {
 		// 	session
 		// }
 		.exec(http("completeTask")
-			.post("completeTask/${processInstanceId}/${taskId}")
+			.post("completeTask/${processDefinitionId}/${processInstanceId}/${taskId}")
 			.headers(contentType)
             .formParam("rtl", "2"))
 		.pause(3)
@@ -43,7 +46,7 @@ object Process_LeaveModel_NOTPASS_N {
 			    .check(jsonPath("$..taskId").saveAs("taskId"))) //获取第二个任务 “经理审批”
 		    .pause(1)
 		    .exec(http("completeTask")
-			    .post("completeTask/${processInstanceId}/${taskId}")
+			    .post("completeTask/${processDefinitionId}/${processInstanceId}/${taskId}")
 			    .headers(contentType)
 			    .formParam("pass", "0")
                 .formParam("rtl", "1"))    
@@ -53,7 +56,7 @@ object Process_LeaveModel_NOTPASS_N {
                 .check(jsonPath("$..taskId").saveAs("taskId"))) //获取"修改申请"task
             .pause(1)
             .exec(http("completeTask")
-                .post("completeTask/${processInstanceId}/${taskId}")
+                .post("completeTask/${processDefinitionId}/${processInstanceId}/${taskId}")
                 .headers(contentType)
                 .formParam("rtl", "2"))
             .pause(1)
@@ -63,7 +66,7 @@ object Process_LeaveModel_NOTPASS_N {
 			.check(jsonPath("$..taskId").saveAs("taskId"))) //获取第二个任务 “经理审批”
 		.pause(1)
 		.exec(http("completeTask")
-			.post("completeTask/${processInstanceId}/${taskId}")
+			.post("completeTask/${processDefinitionId}/${processInstanceId}/${taskId}")
 			.headers(contentType)
 			.formParam("pass", "1")
             .formParam("rtl", "1"))		
