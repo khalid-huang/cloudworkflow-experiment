@@ -67,10 +67,12 @@ public class ActivitiService {
         return ResponseEntity.ok("请求正在调度中");
     }
 //    异步处理，返回客户端结果
-    public ResponseEntity<?> completeTaskWithFutureTask(Map<String, Object> variables, String processInstanceId, String taskId) {
-        String url = "http://" + this.activitiExecutionService + "/completeTask/" + processInstanceId + "/" + taskId;
+    public ResponseEntity<?> completeTaskWithFutureTask(Map<String, Object> variables, String processDefinitionId, String processInstanceId, String taskId) {
+        String url = "http://" + this.activitiExecutionService
+                    + "/completeTask/" + processDefinitionId + "/" + processInstanceId + "/" + taskId;
 //      取出rtl
         String rtl = (String) variables.get("rtl");
+        logger.info("complete task with rtl:" + rtl);
         variables.remove("rtl");
         ActivitiExecuteRequestContext activitiExecuteRequestContext = new ActivitiExecuteRequestContext(rtl, url, variables, this.restTemplate);
         this.activitiExecuteAdmissionor.admit(activitiExecuteRequestContext);

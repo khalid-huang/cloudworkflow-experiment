@@ -15,8 +15,8 @@ import scala.concurrent.duration._
 
 object Process_LeaveModel_PASS {
     var contentType = Map("Content-Type" -> "application/x-www-form-urlencoded")
-    var workflow = exec(http("startProcess")
-			.post("/startProcess/leave")
+    var workflow = exec(http("startProcessInstanceById")
+			.post("/startProcessInstanceById/leave:9:52536")
 			.headers(contentType)
 			.formParam("apply", "zhangsan")
 			.formParam("approve", "lisi")

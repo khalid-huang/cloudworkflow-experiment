@@ -18,8 +18,11 @@ import scala.concurrent.duration._
 
 object Process_OnlineShoppingModel {
     var contentType = Map("Content-Type" -> "application/x-www-form-urlencoded")
-    var workflow = exec(http("startProcess")
-            .post("/startProcess/online-shopping")
+    var workflow = exec { session =>
+            session.set("processDefinitionId", "online-shopping:9:62538")
+        }
+        .exec(http("startProcessInstanceById")
+            .post("/startProcessInstanceById/${processDefinitionId}")
             .headers(contentType)
             .check(jsonPath("$..processInstanceId").saveAs("processInstanceId")))
         .pause(1)
@@ -28,7 +31,7 @@ object Process_OnlineShoppingModel {
 			.check(jsonPath("$..taskId").saveAs("taskId")))
         .pause(1)
         .exec(http("completeTask")   //choose-goods task
-            .post("completeTask/${processInstanceId}/${taskId}")
+            .post("completeTask/${processDefinitionId}/${processInstanceId}/${taskId}")
             .headers(contentType)
             .formParam("rtl", "1"))
         .pause(1)
@@ -37,7 +40,7 @@ object Process_OnlineShoppingModel {
 			.check(jsonPath("$..taskId").saveAs("taskId")))
         .pause(1)
         .exec(http("completeTask")   //pay task
-            .post("completeTask/${processInstanceId}/${taskId}")
+            .post("completeTask/${processDefinitionId}/${processInstanceId}/${taskId}")
             .headers(contentType)
             .formParam("rtl", "2"))
         .pause(1)        
@@ -46,7 +49,7 @@ object Process_OnlineShoppingModel {
 			.check(jsonPath("$..taskId").saveAs("taskId")))
         .pause(1)
         .exec(http("completeTask")    //send goods
-            .post("completeTask/${processInstanceId}/${taskId}")
+            .post("completeTask/${processDefinitionId}/${processInstanceId}/${taskId}")
             .headers(contentType)
             .formParam("rtl", "2"))
         .pause(1)
@@ -55,7 +58,7 @@ object Process_OnlineShoppingModel {
 			.check(jsonPath("$..taskId").saveAs("taskId")))
         .pause(1)
         .exec(http("completeTask")  //receive goods 
-            .post("completeTask/${processInstanceId}/${taskId}")
+            .post("completeTask/${processDefinitionId}/${processInstanceId}/${taskId}")
             .headers(contentType)
             .formParam("rtl", "1"))
         .pause(1)   //流程结束

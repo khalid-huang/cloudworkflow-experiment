@@ -58,16 +58,16 @@ public class ActivitiController {
     }
 
     //启动指定流程
-    @RequestMapping(value = "/startProcessInstanceById/{processInstanceId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/startProcessInstanceById/{processDefinitionId}", method = RequestMethod.POST)
     public ResponseEntity<?> startProcessInstanceById(@RequestParam(required = false) Map<String, Object> variables,
-                                          @PathVariable(value = "processInstanceId", required = false) String processInstanceId) {
+                                          @PathVariable(value = "processDefinitionId", required = false) String processDefinitionId) {
 
         HashMap<String, String> response = new HashMap<>();
 
         //做参数校验
         ArrayList<String> missingParams = new ArrayList<>();
         if(variables == null) missingParams.add("variables");
-        if(processInstanceId == null) missingParams.add("processInstanceId");
+        if(processDefinitionId == null) missingParams.add("processDefinitionId");
         if(missingParams.size() > 0) {
             response.put("status", "fail");
             response.put("message", "required parameters missing: " + CommonUtil.ArrayList2String(missingParams, " "));
@@ -76,9 +76,9 @@ public class ActivitiController {
 
         //启动流程
 //        ProcessInstance pi =  runtimeService.startProcessInstanceById(processInstanceId, variables);
-        ProcessInstance pi =  activitiService.startProcessInstanceById(processInstanceId, variables);
+        ProcessInstance pi =  activitiService.startProcessInstanceById(processDefinitionId, variables);
         response.put("status", "success");
-        response.put("message", "start process " + processInstanceId + " success");
+        response.put("message", "start process " + processDefinitionId + " success");
         response.put("processInstanceId", pi.getId());
         response.put("processDefinitionId", pi.getProcessDefinitionId());
         logger.info(response.toString());
@@ -141,7 +141,7 @@ public class ActivitiController {
     @RequestMapping(value = "getCurrentTasksOfAssignee/{processInstanceId}", method = RequestMethod.GET)
     public ResponseEntity<?> getCurrentTasksOfAssignee(@RequestParam(value = "assignee", required = false) String assignee,
                                                        @PathVariable(value = "processInstanceId", required = false) String processInstanceId) {
-        System.out.println("getCurrentTaskAssignee:" + assignee);
+//        System.out.println("getCurrentTaskAssignee:" + assignee);
         HashMap<String, String> response = new HashMap<>();
 
         //校验参数
@@ -175,7 +175,7 @@ public class ActivitiController {
                                        @PathVariable(value = "taskId", required = false) String taskId) {
         //取出参数; 因为客户端nameService那边用了okhttp针对Object类型加了一个toJSONString，所以这里也要做一个解压出来
         String assignee = JSON.parseObject((String) data.get("assignee"), String.class);
-        System.out.println("claimTask-assignee:" + assignee);
+//        System.out.println("claimTask-assignee:" + assignee);
 
         HashMap<String, String> response = new HashMap<>();
         //参数校验
@@ -222,7 +222,7 @@ public class ActivitiController {
         //这里需要对variables做一次JSON反序列化
 
         for(Map.Entry<String, Object> entry : variables.entrySet()) {
-            System.out.println("key = " + entry.getKey() + ", value = " + entry.getValue());
+//            System.out.println("key = " + entry.getKey() + ", value = " + entry.getValue());
             //需不需要做，需要做个验证才知道
             variables.put(entry.getKey(), JSON.parseObject((String)entry.getValue(), Object.class));
         }

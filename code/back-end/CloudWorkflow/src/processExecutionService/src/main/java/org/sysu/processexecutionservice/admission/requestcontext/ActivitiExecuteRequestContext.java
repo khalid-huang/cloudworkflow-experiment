@@ -85,5 +85,4 @@ public class ActivitiExecuteRequestContext implements IRequestContext{
             return ActivitiExecuteRequestContext.this.restTemplate.postForEntity(activitiExecuteRequestContext.getUrl(),activitiExecuteRequestContext.getVariables(), String.class);
         }
     }
-
 }

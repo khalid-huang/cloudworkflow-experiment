@@ -116,6 +116,6 @@ public class ActivitiController {
         }
 
 //        return activitiService.completeTask(variables, processInstanceId, taskId);
-        return activitiService.completeTaskWithFutureTask(variables, processInstanceId, taskId);
+        return activitiService.completeTaskWithFutureTask(variables, processDefinitionId, processInstanceId, taskId);
     }
 }

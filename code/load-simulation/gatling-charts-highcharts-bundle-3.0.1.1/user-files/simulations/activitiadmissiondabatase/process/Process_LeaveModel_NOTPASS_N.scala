@@ -17,8 +17,8 @@ import scala.concurrent.duration._
 object Process_LeaveModel_NOTPASS_N {
     var N = 10 //表示5次审批失败
     var contentType = Map("Content-Type" -> "application/x-www-form-urlencoded")
-    var workflow = exec(http("startProcess")
-			.post("/startProcess/leave")
+    var workflow = exec(http("startProcessInstanceById")
+			.post("/startProcessInstanceById/leave:9:52536")
 			.headers(contentType)
 			.formParam("apply", "zhangsan")
 			.formParam("approve", "lisi")

@@ -40,8 +40,8 @@ public class ActivitiExecuteAdmissionor implements IAdmissionor {
     private double historyRate = 0.4; //历史值占的比重
 
 //    for test
-    private String usingRule = "BaseQueueScoreRule";
-//    private String usingRule = "BaseRule";
+//    private String usingRule = "BaseQueueScoreRule";
+    private String usingRule = "BaseRule";
 
 
     public double getAverageHistoryRequestNumber() {

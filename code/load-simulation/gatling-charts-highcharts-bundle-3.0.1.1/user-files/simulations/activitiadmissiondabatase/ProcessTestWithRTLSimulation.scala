@@ -12,10 +12,12 @@ Simulation {
 	
 	def basictest() {
 		var contentType = Map("Content-Type" -> "application/x-www-form-urlencoded")
-
 		var scn = scenario("basic activiti scenario")
-			.exec(http("startProcess")
-				.post("/startProcess/leave")
+			.exec { session =>
+				session.set("processDefinitionId", "leave:9:52536")
+			}
+			.exec(http("startProcessInstanceById")
+				.post("/startProcessInstanceById/${processDefinitionId}")
 				.headers(contentType)
 				.formParam("apply", "zhangsan")
 				.formParam("approve", "lisi")
