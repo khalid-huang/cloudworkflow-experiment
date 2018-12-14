@@ -14,7 +14,7 @@ public abstract class AbstractDelayQueueContext implements IQueueContext {
 
     protected Queue<IRequestContext> delayQueue;
 
-    public Queue<IRequestContext> getDelayQueues() {
+    public Queue<IRequestContext> getDelayQueue() {
         return delayQueue;
     }
 

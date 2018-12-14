@@ -58,7 +58,6 @@ public class ActivitiController {
             response.put("message", "required parameters  missing: " + CommonUtil.ArrayList2String(missingParams, " "));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(JSON.toJSONString(response));
         }
-        System.out.println(variables);
         //启动流程
         return activitiService.startProcessInstanceById(variables, processDefinitionId);
     }

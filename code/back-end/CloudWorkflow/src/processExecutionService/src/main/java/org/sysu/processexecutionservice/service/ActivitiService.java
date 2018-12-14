@@ -13,6 +13,9 @@ import org.sysu.processexecutionservice.admission.ActivitiExecuteAdmissionor;
 import org.sysu.processexecutionservice.admission.requestcontext.ActivitiExecuteRequestContext;
 import org.sysu.processexecutionservice.util.CommonUtil;
 
+import javax.annotation.PostConstruct;
+import java.io.FileWriter;
+import java.io.Writer;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -30,6 +33,22 @@ public class ActivitiService {
     private String activitiQueryService = "activiti-query-service";
     private String activitiExecutionService = "activiti-execute-service";
     private String activitiStartService = "activiti-start-service";
+
+//    rtl级别的请求文件
+    private FileWriter writerForRTL0;
+    private FileWriter writerForRTL1;
+    private FileWriter writerForRTL2;
+
+    @PostConstruct
+    private void init() {
+        try {
+            writerForRTL0 = new FileWriter("E:\\workspace\\temp\\admission\\rtl\\rtl0.txt");
+            writerForRTL1 = new FileWriter("E:\\workspace\\temp\\admission\\rtl\\rtl1.txt");
+            writerForRTL2 = new FileWriter("E:\\workspace\\temp\\admission\\rtl\\rtl2.txt");
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+    }
 
     public ResponseEntity<?> getCurrentSingleTask(String processInstanceId) {
         String url = "http://" + this.activitiQueryService + "/getCurrentSingleTask/" + processInstanceId;
@@ -76,6 +95,8 @@ public class ActivitiService {
     }
 //    异步处理，返回客户端结果
     public ResponseEntity<?> completeTaskWithFutureTask(Map<String, Object> variables, String processDefinitionId, String processInstanceId, String taskId) {
+        long startTime = System.currentTimeMillis();// 请求到达时间
+        long endTime; //请求完成时间
         String url = "http://" + this.activitiExecutionService
                     + "/completeTask/" + processDefinitionId + "/" + processInstanceId + "/" + taskId;
 //      取出rtl
@@ -87,6 +108,18 @@ public class ActivitiService {
         this.activitiExecuteAdmissionor.admit(activitiExecuteRequestContext);
         try {
             ResponseEntity<?> result = activitiExecuteRequestContext.getFutureTask().get();
+            endTime = System.currentTimeMillis();
+            //记录响应时间
+            if(rtl.equals("0")) {
+                writerForRTL0.write("" + (endTime - startTime) + "\r\n");
+                writerForRTL0.flush();
+            } else if(rtl.equals("1")) {
+                writerForRTL1.write("" + (endTime - startTime) + "\r\n");
+                writerForRTL1.flush();
+            } else if(rtl.equals("2")) {
+                writerForRTL2.write("" + (endTime - startTime) + "\r\n");
+                writerForRTL2.flush();
+            }
             System.out.println(result);
             return result;
         } catch (Exception e) {

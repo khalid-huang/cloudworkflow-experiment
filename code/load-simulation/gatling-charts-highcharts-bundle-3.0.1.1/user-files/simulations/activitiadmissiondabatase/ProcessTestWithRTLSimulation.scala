@@ -49,9 +49,16 @@ Simulation {
 		setUp(onlineshopping.inject(atOnceUsers(1)).protocols(httpConf))
 	}
 
+	def process_auto_onlineShoppingModel() {
+		var auto_onlineShopping = scenario("auto online shopping").exec(Process_Auto_OnlineShoppingModel.workflow)
+		setUp(auto_onlineShopping.inject(atOnceUsers(1)).protocols(httpConf))
+	}
+
+
 	// basictest()
 	// process_leavemodel_pass()
-	process_leavemodel_notpass()
+	// process_leavemodel_notpass()
 	// process_onlineshoppingmodel()
+	process_auto_onlineShoppingModel()
 
 }

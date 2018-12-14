@@ -21,9 +21,11 @@ public class ActivitiExecuteRequestContext implements IRequestContext{
     private FutureTask<ResponseEntity<String>> futureTask;
 
     private RestTemplate restTemplate;
-
-// 开始执行请求的时间
+//    请求到达的时间
     private long startTime;
+
+//    期望的执行时间(由)IRule计算
+    private long expectExecuteTime;
 
     public ActivitiExecuteRequestContext(String rtl, String url, MultiValueMap<String, Object> variables, RestTemplate restTemplate) {
         this.rtl = rtl;
@@ -31,6 +33,15 @@ public class ActivitiExecuteRequestContext implements IRequestContext{
         this.variables= variables;
         this.restTemplate = restTemplate;
         futureTask = new FutureTask<>(new Task(this));
+        this.startTime = System.currentTimeMillis();
+    }
+
+    public long getExpectExecuteTime() {
+        return expectExecuteTime;
+    }
+
+    public void setExpectExecuteTime(long expectExecuteTime) {
+        this.expectExecuteTime = expectExecuteTime;
     }
 
     public String getRtl() {

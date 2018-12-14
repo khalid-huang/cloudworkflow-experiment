@@ -22,7 +22,7 @@ public class ActivitiExecuteAdmissionor implements IAdmissionor {
     private int maxsSliceNum = 4;
 
 //    队列初始化要交由相应的admit算法来进行，因为不同的算法可能有不同的队列需要【使用反射】
-    private IQueueContext[] delayQueueContexts;
+    private IQueueContext[] delayQueueContexts; //用数组而不用单个的队列是为了方便统计每个时段的请求数；因为统计会很消耗时间；这就是用空间换时间的策略了
 
     private IQueueContext executeQueueContext;
 
@@ -30,18 +30,19 @@ public class ActivitiExecuteAdmissionor implements IAdmissionor {
 
     private ExecutorService executorService = Executors.newCachedThreadPool();
 
-    private Counter originalCounter; //原始波形的计算器
-    private Counter smoothCounter; //平滑之后的计算器
-    private String originalCounterFile = "E:\\workspace\\temp\\counter\\originalCounter.txt";
-    private String smoothCounterFile = "E:\\workspace\\temp\\counter\\smoothCounter.txt";
+    private ActivitiExecuteAdmissionorUpdater activitiExecuteAdmissionorUpdater; //用于做一些更新操作
+
+    private String fileNameForOriginalWaveForm = "E:\\workspace\\temp\\admission\\originalWaveForm.txt";
+    private String fileNameForSmoothWaveForm = "E:\\workspace\\temp\\admission\\smoothWaveForm.txt";
+    private String fileNameForDelayQueuesSize = "E:\\workspace\\temp\\admission\\delayQueuesSize.txt";
 
 //    历史每秒请求数的均值
     private double averageHistoryRequestNumber = 0;
     private double historyRate = 0.4; //历史值占的比重
 
 //    for test
-//    private String usingRule = "BaseQueueScoreRule";
-    private String usingRule = "BaseRule";
+    private String usingRule = "BaseQueueScoreRule";
+//    private String usingRule = "BaseRule";
 
 
     public double getAverageHistoryRequestNumber() {
@@ -89,18 +90,23 @@ public class ActivitiExecuteAdmissionor implements IAdmissionor {
         if(usingRule.equals("BaseRule")) {
             admissionRule = new BaseRule(this);
             executeQueueContext = new LinkedBlockingExecuteQueueContext(this);
-            System.out.println("BaseRule"+ executeQueueContext);
         }
 
-//        生成计算器
-        originalCounter = new Counter(originalCounterFile, this);
-        smoothCounter = new Counter(smoothCounterFile, this);
+//        生成更新器
+        activitiExecuteAdmissionorUpdater = new ActivitiExecuteAdmissionorUpdater(
+                this.fileNameForOriginalWaveForm,
+                this.fileNameForSmoothWaveForm,
+                this.fileNameForDelayQueuesSize,
+                this
+        );
     }
 
     @Override
     public void admit(IRequestContext requestContext) {
 //        在这里可以统计请求的原始波形
-        originalCounter.increase();
+        activitiExecuteAdmissionorUpdater.setFlag(true);
+        activitiExecuteAdmissionorUpdater.increaseOriginalWaveFormCounter();
+
         this.admissionRule.admit(requestContext);
     }
 
@@ -109,7 +115,7 @@ public class ActivitiExecuteAdmissionor implements IAdmissionor {
     @Override
     public void dispatch(IRequestContext requestContext) {
 //        在这里可以统计平滑之后的波形
-        smoothCounter.increase();
+        activitiExecuteAdmissionorUpdater.increaseSmoothWaveFormCounter();
         ActivitiExecuteRequestContext activitiExecuteRequestContext = (ActivitiExecuteRequestContext) requestContext;
         this.executorService.execute(activitiExecuteRequestContext.getFutureTask());
     }
@@ -128,5 +134,29 @@ public class ActivitiExecuteAdmissionor implements IAdmissionor {
 
     public void setExecuteQueueContext(IQueueContext executeQueueContext) {
         this.executeQueueContext = executeQueueContext;
+    }
+
+    public int getTimeSlice() {
+        return timeSlice;
+    }
+
+    public void setTimeSlice(int timeSlice) {
+        this.timeSlice = timeSlice;
+    }
+
+    public int getMaxsSliceNum() {
+        return maxsSliceNum;
+    }
+
+    public void setMaxsSliceNum(int maxsSliceNum) {
+        this.maxsSliceNum = maxsSliceNum;
+    }
+
+    public String getUsingRule() {
+        return usingRule;
+    }
+
+    public void setUsingRule(String usingRule) {
+        this.usingRule = usingRule;
     }
 }

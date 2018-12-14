@@ -33,18 +33,22 @@ public class BaseQueueScoreRule extends AbstractAdmissionRule {
 
         if(activitiExecuteRequestContext.getRtl().equals("0")) {
            this.activitiExecuteAdmissionor.getExecuteQueueContext().offer(requestContext);
-        } else if(activitiExecuteRequestContext.getRtl().equals("1")) {
-//            rtl等于1表示最多延迟2t的时长;
-            int index = calculateIndex(rtl1);
-            this.activitiExecuteAdmissionor.getDelayQueueContexts()[index].offer(requestContext);
-        } else if(activitiExecuteRequestContext.getRtl().equals("2")) {
-            int index = calculateIndex(rtl2);
+        } else {
+            int index = calculateIndex(activitiExecuteRequestContext.getRtl());
+            long expectExecuteTime = activitiExecuteRequestContext.getStartTime() + (index + 1) * this.activitiExecuteAdmissionor.getTimeSlice();
+            activitiExecuteRequestContext.setExpectExecuteTime(expectExecuteTime);
             this.activitiExecuteAdmissionor.getDelayQueueContexts()[index].offer(requestContext);
         }
     }
 
-    public int calculateIndex(int index) {
-        double maxScore = Double.MIN_VALUE;
+    public int calculateIndex(String rtl) {
+        int index = 0;
+        if(rtl.equals("1")) {
+            index = rtl1; //rtl表示最多延迟2个时间片
+        } else if(rtl.equals("2")) {
+            index = rtl2;
+        }
+        double maxScore = Double.NEGATIVE_INFINITY;
         int maxIndex = -1;
         double score;
         for(int i = 0; i < index; i++) {
@@ -52,14 +56,16 @@ public class BaseQueueScoreRule extends AbstractAdmissionRule {
             score = calculateScore((LinkedBlockingDelayQueueContext) this.activitiExecuteAdmissionor.getDelayQueueContexts()[i], i + 1);
             if(maxScore < score) {
                 maxScore = score;
-                maxIndex = index;
+                maxIndex = i;
             }
+            System.out.println("score + i: " + score + "+" + i);
         }
+        System.out.println("maxIndex: " + maxIndex);
         return maxIndex;
     }
 
     private double calculateScore(LinkedBlockingDelayQueueContext linkedBlockingDelayQueueContext, int index) {
-        int size = linkedBlockingDelayQueueContext.getDelayQueues().size();
+        int size = linkedBlockingDelayQueueContext.getDelayQueue().size();
         return (this.activitiExecuteAdmissionor.getAverageHistoryRequestNumber() - size) * (1.0 / (index + 1));
     }
 

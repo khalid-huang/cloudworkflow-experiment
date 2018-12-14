@@ -57,32 +57,33 @@ class AdmisstionLoadWithRTLSimulation extends Simulation {
 // 由onlineShopping来提供一个波峰
         setUp(
             autoOnlineShopping.inject(
-                constantUsersPerSec(2) during(60 seconds)
-            )
-            ,
-            leavePass.inject(
-                constantUsersPerSec(2) during (60 seconds)
+                // constantUsersPerSec(1) during(58 seconds)
+                rampUsers(58) during (60 seconds) 
             ),
             leaveNotPass.inject(
+                // constantUsersPerSec(1) during (30 seconds) //这个流程实现执行的时间比较长
+                rampUsers(30) during (30 seconds) 
+            ),
+            leavePass.inject(
                 nothingFor(5 seconds),
-                atOnceUsers(20),
-                rampUsers(10) during (5 seconds),
-                nothingFor(2 seconds),
-                atOnceUsers(20),
-                rampUsers(5) during (5 seconds),
-                nothingFor(2 seconds),
-                atOnceUsers(30),
-                rampUsers(20) during (5 seconds),
-                nothingFor(5 seconds),
-                rampUsers(15) during (5 seconds),
-                nothingFor(5 seconds),
-                atOnceUsers(15)
+                atOnceUsers(12),
+                rampUsers(9) during (5 seconds),
+                nothingFor(10 seconds),
+                atOnceUsers(9),
+                rampUsers(9) during (5 seconds),
+                nothingFor(15 seconds),
+                atOnceUsers(11),
+                rampUsers(19) during (5 seconds),
+                nothingFor(10 seconds),
+                atOnceUsers(9),
+                nothingFor(5 seconds)
             )
         ).protocols(httpConf)
     }
 
 // 这中情况下start的数量是complete的1/3左右，不大现实
     // admissionLayerWithThreeModel()
+    
     //这种比较好
     admissionLayerWithThreeModel1()
 

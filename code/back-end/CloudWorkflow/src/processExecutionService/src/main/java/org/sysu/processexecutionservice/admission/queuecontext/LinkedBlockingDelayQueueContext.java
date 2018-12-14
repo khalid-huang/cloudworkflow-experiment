@@ -15,7 +15,7 @@ public class LinkedBlockingDelayQueueContext extends AbstractDelayQueueContext {
 
     public LinkedBlockingDelayQueueContext(int minDelayTime, int maxDelayTime, int timeSlice, IQueueContext nextQueueContext){
         this.delayQueue = new LinkedBlockingQueue<IRequestContext>();
-        this.minDelayTime = minDelayTime;
+        this.minDelayTime = minDelayTime; //表示这个队列的可以存放的请求的最小迟延时间是多少
         this.maxDelayTime = maxDelayTime;
         this.nextQueueContext = nextQueueContext;
         this.timeSlice = timeSlice;
@@ -59,7 +59,9 @@ public class LinkedBlockingDelayQueueContext extends AbstractDelayQueueContext {
                     if(!delayQueue.isEmpty()) {
                         ActivitiExecuteRequestContext activitiExecuteRequestContext = (ActivitiExecuteRequestContext) delayQueue.peek();
                         // 表示队头请求已经不属于这个时间段了
-                        remain = (System.currentTimeMillis() + minDelayTime) - activitiExecuteRequestContext.getStartTime();
+                        //remain表示这个请求在这个队列还可以保留的时间
+                        remain = activitiExecuteRequestContext.getExpectExecuteTime() - System.currentTimeMillis() - minDelayTime;
+                        System.out.println("remain: " + remain);
                         if(remain <= 0) {
                             delayQueue.poll();
                             nextQueueContext.offer(activitiExecuteRequestContext);
