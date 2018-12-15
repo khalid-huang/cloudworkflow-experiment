@@ -1,13 +1,20 @@
 package org.sysu.processexecutionservice;
 
+
+import com.netflix.loadbalancer.IRule;
+import com.netflix.loadbalancer.RandomRule;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.sysu.processexecutionservice.scheduler.rule.ActivitiRule;
 
 @SpringBootApplication
 public class ProcessExecutionServiceApplication {
@@ -33,6 +40,12 @@ public class ProcessExecutionServiceApplication {
     @LoadBalanced
     public RestTemplate restTemplate() {
         return new RestTemplate();
+    }
+
+    @Bean
+    public IRule myRule() {
+//        return new RandomRule();
+        return new ActivitiRule();
     }
 
 }
