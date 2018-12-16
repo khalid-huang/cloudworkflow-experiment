@@ -10,10 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 
-public class ActivitiRule extends RoundRobinRule {
+public class ActivitiRule extends BestAvailableRule {
 
     private static Logger logger = LoggerFactory.getLogger(ActivitiRule.class);
 
+    // 维护服务器组
     private final Map<String, Set<Server>> proDefinitionIdToServerGroup =
             Collections.synchronizedMap(new LinkedHashMap<String, Set<Server>>(50, 0.75f, true));
 
@@ -21,42 +22,30 @@ public class ActivitiRule extends RoundRobinRule {
         super();
     }
 
-    public ActivitiRule(ILoadBalancer lb) {
-        super(lb);
-    }
-
     public Server chooseServer(ILoadBalancer lb, Object key) {
         if(lb == null) {
             logger.warn("no load balancer");
             return null;
         }
+        LoadBalancerStats loadBalancerStats = ((AbstractLoadBalancer)lb).getLoadBalancerStats();
+        if (loadBalancerStats == null) {
+            return super.choose(key);
+        }
+
         Server server = null;
-
-        int count = 0; //尝试10次；
-        while (server == null && count++ < 10) {
-            List<Server> reachableServers = lb.getReachableServers();
-            int upCount = reachableServers.size();
-            if((upCount == 0)) {
-                logger.warn("no up servers available from load balancer");
-                return null;
-            }
-
-            AbstractLoadBalancer nlb = (AbstractLoadBalancer) lb;
-            LoadBalancerStats stats = nlb.getLoadBalancerStats();
-            server = _choose(reachableServers, stats, key);
-            if(server == null) {
-                Thread.yield();
-                continue;
-            }
-            if(server.isAlive() && server.isReadyToServe()) {
-                return server;
-            }
-            server = null;
+        List<Server> reachableServers = lb.getReachableServers();
+        int upCount = reachableServers.size();
+        if((upCount == 0)) {
+            logger.warn("no up servers available from load balancer");
+            return null;
         }
-        if(count >= 10) {
-            logger.warn("No available alive servers after 10 tries from load balancer: " + lb);
+        server = _choose(reachableServers, loadBalancerStats, key);
+        if (server == null) {
+            return super.choose(key);
         }
-        return server;
+        else {
+            return server;
+        }
     }
 
     private Server _choose(List<Server> reachableServer, LoadBalancerStats stats, Object key) {
@@ -79,8 +68,43 @@ public class ActivitiRule extends RoundRobinRule {
         else {
             logger.info("从之前执行过的引擎中选择----------");
             List<Server> previousServerList = new ArrayList<>(servers);
+            result = chooseMinConcurrentFromServerGroup(reachableServer, previousServerList, stats);
+            if (result == null) {
+                result = super.choose(key);
+            }
+            servers.add(result);
+            proDefinitionIdToServerGroup.put(processDefinitionId, servers);
+        }
+        return result;
+    }
 
-            result = previousServerList.get(0);
+    private Server chooseMinConcurrentFromServerGroup(List<Server> reachableServer, List<Server> previousServerList, LoadBalancerStats stats) {
+        Server result = null;
+        int minimalConcurrentConnections = Integer.MAX_VALUE;
+        long currentTime = System.currentTimeMillis();
+        for (Server server : previousServerList) {
+            ServerStats serverStats = stats.getSingleServerStat(server);
+            if (!serverStats.isCircuitBreakerTripped(currentTime)) {
+                int concurrentConnections = serverStats.getActiveRequestsCount(currentTime);
+                if (concurrentConnections < minimalConcurrentConnections) {
+                    minimalConcurrentConnections = concurrentConnections;
+                    result = server;
+                }
+            }
+        }
+        // 设置并发数超过100就从所有服务器中选择并发最小的
+        if (minimalConcurrentConnections > 100) {
+            reachableServer.removeAll(previousServerList);
+            for (Server server: reachableServer) {
+                ServerStats serverStats = stats.getSingleServerStat(server);
+                if (!serverStats.isCircuitBreakerTripped(currentTime)) {
+                    int concurrentConnections = serverStats.getActiveRequestsCount(currentTime);
+                    if (concurrentConnections < minimalConcurrentConnections) {
+                        minimalConcurrentConnections = concurrentConnections;
+                        result = server;
+                    }
+                }
+            }
         }
         return result;
     }
