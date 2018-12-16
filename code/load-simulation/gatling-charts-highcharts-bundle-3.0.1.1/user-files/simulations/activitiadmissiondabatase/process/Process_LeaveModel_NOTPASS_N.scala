@@ -18,7 +18,7 @@ object Process_LeaveModel_NOTPASS_N {
     var N = 4 //表示5次审批失败
     var contentType = Map("Content-Type" -> "application/x-www-form-urlencoded")
     var workflow = exec { session =>
-            session.set("processDefinitionId", "leave:9:52536")
+            session.set("processDefinitionId", "leave:1:42")
         } 
 		.exec(http("startProcessInstanceById")
 			.post("/startProcessInstanceById/${processDefinitionId}")
