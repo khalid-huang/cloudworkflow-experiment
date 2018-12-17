@@ -51,7 +51,7 @@ Simulation {
 
 	def process_auto_onlineShoppingModel() {
 		var auto_onlineShopping = scenario("auto online shopping").exec(Process_Auto_OnlineShoppingModel.workflow)
-		setUp(auto_onlineShopping.inject(atOnceUsers(1)).protocols(httpConf))
+		setUp(auto_onlineShopping.inject(atOnceUsers(50)).protocols(httpConf))
 	}
 
 

@@ -93,7 +93,7 @@ public class ActivitiRule extends BestAvailableRule {
             }
         }
         // 设置并发数超过100就从所有服务器中选择并发最小的
-        if (minimalConcurrentConnections > 100) {
+        if (minimalConcurrentConnections > 50) {
             reachableServer.removeAll(previousServerList);
             for (Server server: reachableServer) {
                 ServerStats serverStats = stats.getSingleServerStat(server);
@@ -114,7 +114,7 @@ public class ActivitiRule extends BestAvailableRule {
         String uri = request.getRequestURI();
 
         // 查询直接处理
-        if (uri.contains("get")) return super.choose(key);
+        if (uri.contains("get") || uri.contains("start")) return super.choose(key);
 
         //获取processDefinitionId的值
         int startIndex = uri.indexOf('/', 1)+1;
