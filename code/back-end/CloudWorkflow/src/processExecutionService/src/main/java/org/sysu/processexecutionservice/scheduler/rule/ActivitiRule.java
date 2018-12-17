@@ -92,10 +92,11 @@ public class ActivitiRule extends BestAvailableRule {
                 }
             }
         }
-        // 设置并发数超过100就从所有服务器中选择并发最小的
+        // 设置并发数超过50就从所有服务器中选择并发最小的
         if (minimalConcurrentConnections > 50) {
-            reachableServer.removeAll(previousServerList);
-            for (Server server: reachableServer) {
+            List<Server> serverList = new ArrayList<>(reachableServer);
+            serverList.removeAll(previousServerList);
+            for (Server server: serverList) {
                 ServerStats serverStats = stats.getSingleServerStat(server);
                 if (!serverStats.isCircuitBreakerTripped(currentTime)) {
                     int concurrentConnections = serverStats.getActiveRequestsCount(currentTime);

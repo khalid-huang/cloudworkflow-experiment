@@ -1,0 +1,10 @@
+{
+  "simulation": "activitiadmissiondatabase.ProcessTestWithRTLSimulation",
+  "simulationId": "processtestwithrtlsimulation",
+  "start": 1545051132923,
+  "description": "1",
+  "scenarios": ["auto online shopping"],
+  "assertions": [
+
+  ]
+}
