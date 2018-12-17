@@ -114,7 +114,8 @@ public class ActivitiController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(JSON.toJSONString(response));
         }
 
+        return activitiService.complete(variables, processDefinitionId, processInstanceId, taskId);
 //        return activitiService.completeTask(variables, processInstanceId, taskId);
-        return activitiService.completeTaskWithFutureTask(variables, processDefinitionId, processInstanceId, taskId);
+//        return activitiService.completeTaskWithFutureTask(variables, processDefinitionId, processInstanceId, taskId);
     }
 }

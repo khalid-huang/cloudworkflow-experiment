@@ -77,6 +77,14 @@ public class ActivitiService {
         return result;
     }
 
+    public ResponseEntity<?> complete(Map<String, Object> variables, String processDefinitionId, String processInstanceId, String taskId) {
+        String url = "http://" + this.activitiExecutionService + "/completeTask/" + processDefinitionId + "/" + processInstanceId + "/" + taskId;
+//        封装参数，要使用MultiValueMap，不可以用Map或是HashMap
+        MultiValueMap<String, Object> valueMap = CommonUtil.map2MultiValueMap(variables);
+        ResponseEntity<String> result = restTemplate.postForEntity(url, valueMap, String.class);
+        return result;
+    }
+
 //    异步处理，不立即返回客户端结果
     public ResponseEntity<?> completeTask(Map<String, Object> variables, String processInstanceId, String taskId) {
         String url = "http://" + this.activitiExecutionService + "/completeTask/" + processInstanceId + "/" + taskId;
