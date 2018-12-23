@@ -8,7 +8,7 @@ import activitiadmissiondatabase.process._
 class ProcessTestWithRTLSimulation extends 
 Simulation {
 	val httpConf = http
-		.baseUrl("http://222.200.180.59:8771/")
+		.baseUrl("http://222.200.180.59:8774/")
 	
 	def basictest() {
 		var contentType = Map("Content-Type" -> "application/x-www-form-urlencoded")
@@ -53,57 +53,24 @@ Simulation {
 		var auto_onlineShopping = scenario("auto online shopping").exec(Process_Auto_OnlineShoppingModel.workflow)
 		setUp(
 			auto_onlineShopping.inject(
-				rampUsers(10) during (5 seconds),
-				nothingFor(5 seconds),
-                atOnceUsers(11),
-                rampUsers(8) during (5 seconds),
-                nothingFor(10 seconds),
-                atOnceUsers(8),
-                rampUsers(8) during (5 seconds),
-                nothingFor(15 seconds),
-                atOnceUsers(10),
-                rampUsers(10) during (5 seconds),
-                nothingFor(10 seconds),
-                atOnceUsers(9),
-                nothingFor(5 seconds), //60s
-                // nothingFor(5 seconds), 
-                atOnceUsers(11),
-                rampUsers(8) during (5 seconds),
-                nothingFor(10 seconds),
-                atOnceUsers(8),
-                rampUsers(8) during (5 seconds),
-                nothingFor(15 seconds),
-                atOnceUsers(10),
-                rampUsers(10) during (5 seconds),
-                nothingFor(10 seconds),
-                atOnceUsers(9),
-                nothingFor(5 seconds),
-                // nothingFor(5 seconds), 
-                atOnceUsers(11),
-                rampUsers(8) during (5 seconds),
-                nothingFor(10 seconds),
-                atOnceUsers(8),
-                rampUsers(8) during (5 seconds),
-                nothingFor(15 seconds),
-                atOnceUsers(10),
-                rampUsers(10) during (5 seconds),
-                nothingFor(10 seconds),
-                atOnceUsers(9),
-                nothingFor(5 seconds),
-                // nothingFor(5 seconds), 
-                atOnceUsers(11),
-                rampUsers(8) during (5 seconds),
-                nothingFor(10 seconds),
-                atOnceUsers(8),
-                rampUsers(8) during (5 seconds),
-                nothingFor(15 seconds),
-                atOnceUsers(10),
-                rampUsers(10) during (5 seconds),
-                nothingFor(10 seconds),
-                atOnceUsers(9),
-                nothingFor(5 seconds)
+				constantUsersPerSec(10) during(5 minutes))
+		).throttle(
+			reachRps(10) in (10 seconds),
+			holdFor(1 minute),
+			jumpToRps(5),
+			holdFor(2 minute)
+		).protocols(httpConf)
+	}
 
-		).protocols(httpConf))
+	def process_auto_onlineShoppingModel2() {
+		var auto_onlineShopping = scenario("auto online shopping2").exec(Process_Auto_OnlineShoppingModel2.workflow)
+		setUp(
+			auto_onlineShopping.inject(
+				rampUsers(600) during (2 minutes))
+		).throttle(
+			reachRps(60) in (5 seconds),
+			holdFor(1 minute)
+		).protocols(httpConf)
 	}
 
 
@@ -111,6 +78,6 @@ Simulation {
 	// process_leavemodel_pass()
 	// process_leavemodel_notpass()
 	// process_onlineshoppingmodel()
-	process_auto_onlineShoppingModel()
+	process_auto_onlineShoppingModel2()
 
 }

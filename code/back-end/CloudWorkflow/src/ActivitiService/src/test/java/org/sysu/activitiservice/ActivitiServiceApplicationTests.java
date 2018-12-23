@@ -49,6 +49,17 @@ public class ActivitiServiceApplicationTests {
         System.out.println("test");
     }
 
+    @Test
+    public void initDeploy() {
+//        for (int i = 0; i < 100; i++) {
+//            repositoryService.createDeployment().addClasspathResource("processes/1_model.bpmn20.xml").deploy();
+//        }
+        List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery().processDefinitionKey("online-shopping").list();
+        for (ProcessDefinition d : list) {
+            System.out.println(d.getId());
+        }
+    }
+
 //    @Test
     public void contextDeploy() {
         long count = repositoryService.createProcessDefinitionQuery().count();
