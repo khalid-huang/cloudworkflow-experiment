@@ -561,7 +561,7 @@ public class ActivitiServiceApplicationTests {
         System.out.println("no recover: " + (endTime2 - startTime2));//时间消耗大概是296ms；书本35页也有说到这种缓存带来的性能上的大提升
     }
 
-    @Test
+//    @Test
     public void testRAM() {
         //部署全部文档
 //        String model1 = "processes/1_model.bpmn20.xml";
