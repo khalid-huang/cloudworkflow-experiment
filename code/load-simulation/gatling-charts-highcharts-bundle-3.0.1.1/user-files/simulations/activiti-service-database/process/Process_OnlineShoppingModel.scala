@@ -6,41 +6,35 @@ import scala.concurrent.duration._
 
 object Process_OnlineShoppingModel {
     var contentType = Map("Content-Type" -> "application/x-www-form-urlencoded")
-    var workflow = exec(http("startProcess")
-            .post("/startProcess/online-shopping")
+    var workflow = exec { session =>
+            session.set("processDefinitionId", "online-shopping:100:400")
+        }
+        .exec(http("startProcessInstanceById")
+            .post("/startProcessInstanceById/${processDefinitionId}")
             .headers(contentType)
             .check(jsonPath("$..processInstanceId").saveAs("processInstanceId")))
-        .pause(1)
         .exec(http("getCurrentSingleTask")
 			.get("getCurrentSingleTask/${processInstanceId}")
 			.check(jsonPath("$..taskId").saveAs("taskId")))
-        .pause(1)
-        .exec(http("completeTask")
-            .post("completeTask/${processInstanceId}/${taskId}")
+        .exec(http("completeTask")   //choose-goods task
+            .post("completeTask/${processDefinitionId}/${processInstanceId}/${taskId}")
             .headers(contentType))
-        .pause(1)
         .exec(http("getCurrentSingleTask")
 			.get("getCurrentSingleTask/${processInstanceId}")
 			.check(jsonPath("$..taskId").saveAs("taskId")))
-        .pause(1)
-        .exec(http("completeTask")
-            .post("completeTask/${processInstanceId}/${taskId}")
+        .exec(http("completeTask")   //pay task
+            .post("completeTask/${processDefinitionId}/${processInstanceId}/${taskId}")
             .headers(contentType))
-        .pause(1)        
         .exec(http("getCurrentSingleTask")
 			.get("getCurrentSingleTask/${processInstanceId}")
 			.check(jsonPath("$..taskId").saveAs("taskId")))
-        .pause(1)
-        .exec(http("completeTask")
-            .post("completeTask/${processInstanceId}/${taskId}")
+        .exec(http("completeTask")    //send goods
+            .post("completeTask/${processDefinitionId}/${processInstanceId}/${taskId}")
             .headers(contentType))
-        .pause(1)
         .exec(http("getCurrentSingleTask")
 			.get("getCurrentSingleTask/${processInstanceId}")
 			.check(jsonPath("$..taskId").saveAs("taskId")))
-        .pause(1)
-        .exec(http("completeTask")
-            .post("completeTask/${processInstanceId}/${taskId}")
+        .exec(http("completeTask")  //receive goods 
+            .post("completeTask/${processDefinitionId}/${processInstanceId}/${taskId}")
             .headers(contentType))
-        .pause(1)   //流程结束
 }
