@@ -8,7 +8,7 @@ import activitiadmissiondatabase.process._
 class ProcessTestWithRTLSimulation extends 
 Simulation {
 	val httpConf = http
-		.baseUrl("http://localhost:8771/")
+		.baseUrl("http://222.200.180.59:8771/")
 	
 	def basictest() {
 		var contentType = Map("Content-Type" -> "application/x-www-form-urlencoded")
@@ -51,7 +51,59 @@ Simulation {
 
 	def process_auto_onlineShoppingModel() {
 		var auto_onlineShopping = scenario("auto online shopping").exec(Process_Auto_OnlineShoppingModel.workflow)
-		setUp(auto_onlineShopping.inject(atOnceUsers(1)).protocols(httpConf))
+		setUp(
+			auto_onlineShopping.inject(
+				rampUsers(10) during (5 seconds),
+				nothingFor(5 seconds),
+                atOnceUsers(11),
+                rampUsers(8) during (5 seconds),
+                nothingFor(10 seconds),
+                atOnceUsers(8),
+                rampUsers(8) during (5 seconds),
+                nothingFor(15 seconds),
+                atOnceUsers(10),
+                rampUsers(10) during (5 seconds),
+                nothingFor(10 seconds),
+                atOnceUsers(9),
+                nothingFor(5 seconds), //60s
+                // nothingFor(5 seconds), 
+                atOnceUsers(11),
+                rampUsers(8) during (5 seconds),
+                nothingFor(10 seconds),
+                atOnceUsers(8),
+                rampUsers(8) during (5 seconds),
+                nothingFor(15 seconds),
+                atOnceUsers(10),
+                rampUsers(10) during (5 seconds),
+                nothingFor(10 seconds),
+                atOnceUsers(9),
+                nothingFor(5 seconds),
+                // nothingFor(5 seconds), 
+                atOnceUsers(11),
+                rampUsers(8) during (5 seconds),
+                nothingFor(10 seconds),
+                atOnceUsers(8),
+                rampUsers(8) during (5 seconds),
+                nothingFor(15 seconds),
+                atOnceUsers(10),
+                rampUsers(10) during (5 seconds),
+                nothingFor(10 seconds),
+                atOnceUsers(9),
+                nothingFor(5 seconds),
+                // nothingFor(5 seconds), 
+                atOnceUsers(11),
+                rampUsers(8) during (5 seconds),
+                nothingFor(10 seconds),
+                atOnceUsers(8),
+                rampUsers(8) during (5 seconds),
+                nothingFor(15 seconds),
+                atOnceUsers(10),
+                rampUsers(10) during (5 seconds),
+                nothingFor(10 seconds),
+                atOnceUsers(9),
+                nothingFor(5 seconds)
+
+		).protocols(httpConf))
 	}
 
 
