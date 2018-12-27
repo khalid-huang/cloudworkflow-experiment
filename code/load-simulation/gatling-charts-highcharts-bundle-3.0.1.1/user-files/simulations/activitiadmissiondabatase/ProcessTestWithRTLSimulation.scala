@@ -8,7 +8,7 @@ import activitiadmissiondatabase.process._
 class ProcessTestWithRTLSimulation extends 
 Simulation {
 	val httpConf = http
-		.baseUrl("http://222.200.180.59:8774/")
+		.baseUrl("http://localhost:8771/")
 	
 	def basictest() {
 		var contentType = Map("Content-Type" -> "application/x-www-form-urlencoded")
@@ -64,13 +64,19 @@ Simulation {
 
 	def process_auto_onlineShoppingModel2() {
 		var auto_onlineShopping = scenario("auto online shopping2").exec(Process_Auto_OnlineShoppingModel2.workflow)
+		
 		setUp(
 			auto_onlineShopping.inject(
-				rampUsers(600) during (2 minutes))
-		).throttle(
-			reachRps(60) in (5 seconds),
-			holdFor(1 minute)
-		).protocols(httpConf)
+				rampUsers(3) during (5 seconds)
+		).protocols(httpConf))
+
+		// setUp(
+		// 	auto_onlineShopping.inject(
+		// 		rampUsers(2000) during (8 minutes))
+		// ).throttle(
+		// 	reachRps(120) in (30 seconds),
+		// 	holdFor(2 minute)
+		// ).protocols(httpConf)
 	}
 
 

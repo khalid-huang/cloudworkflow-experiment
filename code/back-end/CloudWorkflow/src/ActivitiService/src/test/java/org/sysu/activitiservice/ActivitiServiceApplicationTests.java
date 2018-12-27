@@ -42,23 +42,34 @@ public class ActivitiServiceApplicationTests {
     @Autowired
     private RepositoryService repositoryService;
 
-    @Test
+//    @Test
     public void contextLoads() {
         long count = repositoryService.createProcessDefinitionQuery().count();
         System.out.println(count);
         System.out.println("test");
     }
 
-    @Test
+//    @Test
     public void initDeploy() {
-//        for (int i = 0; i < 100; i++) {
+//        for (int i = 0; i < 860; i++) {
 //            repositoryService.createDeployment().addClasspathResource("processes/1_model.bpmn20.xml").deploy();
 //        }
-        List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery().processDefinitionKey("online-shopping").list();
-        for (ProcessDefinition d : list) {
-            System.out.println(d.getId());
-        }
+//        List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery().processDefinitionKey("online-shopping").list();
+//        for (ProcessDefinition d : list) {
+//            System.out.println(d.getId());
+//       }
+        Map<String, Object> variables = new HashMap<String, Object>();
+        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("online-shopping", variables);
+        System.out.println(processInstance.getId());
+
+        runtimeService.startProcessInstanceByKey("a4-model", variables);
+        runtimeService.startProcessInstanceByKey("a5-model", variables);
+        runtimeService.startProcessInstanceByKey("a6-model", variables);
+        runtimeService.startProcessInstanceByKey("a7-model", variables);
+
+
     }
+
 
 //    @Test
     public void contextDeploy() {

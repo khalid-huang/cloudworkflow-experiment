@@ -16,7 +16,7 @@ public class ActivitiRule extends BestAvailableRule {
 
     // 维护服务器组
     private final Map<String, Set<Server>> proDefinitionIdToServerGroup =
-            Collections.synchronizedMap(new LinkedHashMap<String, Set<Server>>(50, 0.75f, true));
+            Collections.synchronizedMap(new LinkedHashMap<String, Set<Server>>(200, 0.75f, true));
 
     public ActivitiRule() {
         super();
