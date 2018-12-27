@@ -1,14 +1,23 @@
 package org.sysu.activitiservice.service;
 
+import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
+import org.activiti.engine.impl.persistence.deploy.DefaultDeploymentCache;
+import org.activiti.engine.impl.persistence.deploy.DeploymentManager;
+import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.sysu.activitiservice.FileNameContext;
 
+import javax.annotation.PostConstruct;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,11 +35,31 @@ public class ActivitiService {
     @Autowired
     TaskService taskService;
 
+    @Autowired
+    ProcessEngine processEngine;
+
+    FileWriter writerForProcessDefinitionsNumber;
+
+    @PostConstruct
+    void init() {
+        try {
+            writerForProcessDefinitionsNumber = new FileWriter(FileNameContext.FileNameForProcessDefinitionId);
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+    }
+
     public ProcessInstance startProcessInstanceByKey(String processModelKey, Map<String,Object> variables) {
         return runtimeService.startProcessInstanceByKey(processModelKey, variables);
     }
 
     public ProcessInstance startProcessInstanceById(String processInstanceId, Map<String,Object> variables) {
+        try {
+            writerForProcessDefinitionsNumber.write(processInstanceId + ": " + getDeployedProcessDefinitionNumber());
+            writerForProcessDefinitionsNumber.flush();
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
         return runtimeService.startProcessInstanceById(processInstanceId, variables);
     }
 
@@ -85,7 +114,12 @@ public class ActivitiService {
         return true;
     }
 
-
+    private int getDeployedProcessDefinitionNumber() {
+        ProcessEngineConfigurationImpl processEngineConfiguration1 = (ProcessEngineConfigurationImpl) processEngine.getProcessEngineConfiguration();
+        DeploymentManager deploymentManager = processEngineConfiguration1.getDeploymentManager();
+        DefaultDeploymentCache<ProcessDefinitionEntity> defaultDeploymentCache = (DefaultDeploymentCache) deploymentManager.getProcessDefinitionCache();
+        return defaultDeploymentCache.size();
+    }
 
 
 }
