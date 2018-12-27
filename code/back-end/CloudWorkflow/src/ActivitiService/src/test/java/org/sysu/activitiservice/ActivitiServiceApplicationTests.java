@@ -1,10 +1,10 @@
 package org.sysu.activitiservice;
 
 
-import org.activiti.engine.HistoryService;
-import org.activiti.engine.RepositoryService;
-import org.activiti.engine.RuntimeService;
-import org.activiti.engine.TaskService;
+import org.activiti.engine.*;
+import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
+import org.activiti.engine.impl.persistence.deploy.DefaultDeploymentCache;
+import org.activiti.engine.impl.persistence.deploy.DeploymentManager;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
@@ -42,11 +42,26 @@ public class ActivitiServiceApplicationTests {
     @Autowired
     private RepositoryService repositoryService;
 
+    @Autowired
+    private ProcessEngineConfiguration processEngineConfiguration;
+
+    @Autowired
+    private ProcessEngine processEngine;
+
     @Test
     public void contextLoads() {
         long count = repositoryService.createProcessDefinitionQuery().count();
         System.out.println(count);
         System.out.println("test");
+
+//        runtimeService.startProcessInstanceById("a10-model:1:207539");
+        runtimeService.startProcessInstanceById("online-shopping:102:427504");
+
+
+        ProcessEngineConfigurationImpl processEngineConfiguration1 = (ProcessEngineConfigurationImpl) processEngine.getProcessEngineConfiguration();
+        DeploymentManager deploymentManager = processEngineConfiguration1.getDeploymentManager();
+        DefaultDeploymentCache<ProcessDefinitionEntity> defaultDeploymentCache = (DefaultDeploymentCache) deploymentManager.getProcessDefinitionCache();
+        System.out.println("cache size: " + defaultDeploymentCache.size());
     }
 
 //    @Test
@@ -561,7 +576,7 @@ public class ActivitiServiceApplicationTests {
         System.out.println("no recover: " + (endTime2 - startTime2));//时间消耗大概是296ms；书本35页也有说到这种缓存带来的性能上的大提升
     }
 
-    @Test
+//    @Test
     public void testRAM() {
         //部署全部文档
 //        String model1 = "processes/1_model.bpmn20.xml";
