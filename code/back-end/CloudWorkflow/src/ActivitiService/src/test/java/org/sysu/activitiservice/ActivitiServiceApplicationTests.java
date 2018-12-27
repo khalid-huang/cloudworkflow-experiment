@@ -312,8 +312,6 @@ public class ActivitiServiceApplicationTests {
         taskService.complete(task9.getId());
         endTime = System.currentTimeMillis();
         writerForSequenceFile.write("" + (endTime - startTime) + "\r\n");
-
-
         taskService.complete(taskService.createTaskQuery().processInstanceId(pi.getId()).singleResult().getId());
 
         System.out.println(historyService.createHistoricProcessInstanceQuery().finished().count());
