@@ -42,7 +42,7 @@ public class ActivitiServiceApplicationTests {
     @Autowired
     private RepositoryService repositoryService;
 
-//    @Test
+    @Test
     public void contextLoads() {
         long count = repositoryService.createProcessDefinitionQuery().count();
         System.out.println(count);

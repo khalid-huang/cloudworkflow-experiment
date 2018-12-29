@@ -1,9 +1,5 @@
 package org.activiti.spring;
 
-/**
- * @author: Gordan Lin
- * @create: 2018/12/27
- **/
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
