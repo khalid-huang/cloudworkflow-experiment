@@ -21,6 +21,7 @@ public class ActivitiConfig {
         SpringProcessEngineConfiguration processEngineConfiguration = new SpringProcessEngineConfiguration();
 
         processEngineConfiguration.setDataSource(dataSource);
+        processEngineConfiguration.setProcessDefinitionCacheLimit();
         processEngineConfiguration.setDatabaseSchemaUpdate("true");
         processEngineConfiguration.setTransactionManager(platformTransactionManager);
         System.out.println("processConfiguration:" + processEngineConfiguration);

@@ -9,6 +9,7 @@ import org.activiti.engine.impl.persistence.deploy.DeploymentManager;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.apache.lucene.util.RamUsageEstimator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ public class ActivitiService {
 
     public ProcessInstance startProcessInstanceById(String processInstanceId, Map<String,Object> variables) {
         try {
-            writerForProcessDefinitionsNumber.write(processInstanceId + ": " + getDeployedProcessDefinitionNumber());
+            writerForProcessDefinitionsNumber.write(processInstanceId + ": " + getDeployedProcessDefinitionNumberAndSize() + "\r\n");
             writerForProcessDefinitionsNumber.flush();
         } catch (IOException e) {
             System.out.println(e.toString());
@@ -114,11 +115,11 @@ public class ActivitiService {
         return true;
     }
 
-    private int getDeployedProcessDefinitionNumber() {
+    private String getDeployedProcessDefinitionNumberAndSize() {
         ProcessEngineConfigurationImpl processEngineConfiguration1 = (ProcessEngineConfigurationImpl) processEngine.getProcessEngineConfiguration();
         DeploymentManager deploymentManager = processEngineConfiguration1.getDeploymentManager();
         DefaultDeploymentCache<ProcessDefinitionEntity> defaultDeploymentCache = (DefaultDeploymentCache) deploymentManager.getProcessDefinitionCache();
-        return defaultDeploymentCache.size();
+        return "size: " + defaultDeploymentCache.size() + "- usage:" + RamUsageEstimator.sizeOf(defaultDeploymentCache);
     }
 
 

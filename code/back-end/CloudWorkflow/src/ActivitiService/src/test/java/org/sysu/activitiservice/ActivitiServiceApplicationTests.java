@@ -49,6 +49,11 @@ public class ActivitiServiceApplicationTests {
     private ProcessEngine processEngine;
 
     @Test
+    public void contextLoad() {
+        System.out.println("test");
+    }
+
+//    @Test
     public void contextLoads() {
         long count = repositoryService.createProcessDefinitionQuery().count();
         System.out.println(count);
@@ -608,80 +613,91 @@ public class ActivitiServiceApplicationTests {
         System.out.println("Integer 0: " + RamUsageEstimator.sizeOf(new Integer(0)));
         //计算模型1 RAM
         System.out.println("model 1 ram test");
-        ExecutionEntity executionEntity1 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("online-shopping");
+        ExecutionEntity executionEntity1 = (ExecutionEntity) runtimeService.startProcessInstanceById("online-shopping:1000:8920");
+        ExecutionEntity executionEntity2 = (ExecutionEntity) runtimeService.startProcessInstanceById("online-shopping:1001:8924");
+        System.out.println("executionEntity");
+        System.out.println(executionEntity1);
         ActivityImpl initial1 = executionEntity1.getActivity();
-        System.out.println(RamUsageEstimator.sizeOf(initial1));
+        System.out.println(RamUsageEstimator.sizeOf(executionEntity1));
         System.out.println(RamUsageEstimator.humanSizeOf(initial1));
-
-        //计算模型2 RAM
-        System.out.println("model 2 ram test");
-        ExecutionEntity executionEntity2 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("load-application");
-        ActivityImpl initial2 = executionEntity2.getActivity();
-        System.out.println(RamUsageEstimator.sizeOf(initial2));
-        System.out.println(RamUsageEstimator.humanSizeOf(initial2));
-
-        //计算模型3 RAM
-        System.out.println("model 3 ram test");
-        ExecutionEntity executionEntity3 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("leave-process");
-        ActivityImpl initial3 = executionEntity3.getActivity();
-        System.out.println(RamUsageEstimator.sizeOf(initial3));
-        System.out.println(RamUsageEstimator.humanSizeOf(initial3));
-
-        //计算模型4 RAM
-        System.out.println("model 4 ram test");
-        ExecutionEntity executionEntity4 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("a4-model");
-        ActivityImpl initial4 = executionEntity4.getActivity();
-        System.out.println(RamUsageEstimator.sizeOf(initial4));
-        System.out.println(RamUsageEstimator.humanSizeOf(initial4));
-
-        //计算模型5 RAM
-        System.out.println("model 5 ram test");
-        ExecutionEntity executionEntity5 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("a5-model");
-        ActivityImpl initial5 = executionEntity5.getActivity();
-        System.out.println(RamUsageEstimator.sizeOf(initial5));
-        System.out.println(RamUsageEstimator.humanSizeOf(initial5));
-
-        //计算模型6 RAM
-        System.out.println("model 6 ram test");
-        ExecutionEntity executionEntity6 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("a6-model");
-        ActivityImpl initial6 = executionEntity6.getActivity();
-        System.out.println(RamUsageEstimator.sizeOf(initial6));
-        System.out.println(RamUsageEstimator.humanSizeOf(initial6));
-
-        //计算模型7 RAM
-        System.out.println("model 7 ram test");
-        ExecutionEntity executionEntity7 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("a7-model");
-        ActivityImpl initial7 = executionEntity7.getActivity();
-        System.out.println(RamUsageEstimator.sizeOf(initial7));
-        System.out.println(RamUsageEstimator.humanSizeOf(initial7));
-
-        //计算模型8 RAM
-        System.out.println("model 8 ram test");
-        ExecutionEntity executionEntity8 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("a8-model");
-        ActivityImpl initial8 = executionEntity8.getActivity();
-        System.out.println(RamUsageEstimator.sizeOf(initial8));
-        System.out.println(RamUsageEstimator.humanSizeOf(initial8));
-
-        //计算模型9 RAM
-        System.out.println("model 9 ram test");
-        ExecutionEntity executionEntity9 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("a9-model");
-        ActivityImpl initial9 = executionEntity9.getActivity();
-        System.out.println(RamUsageEstimator.sizeOf(initial9));
-        System.out.println(RamUsageEstimator.humanSizeOf(initial9));
-
-        //计算模型10 RAM
-        System.out.println("model 10 ram test");
-        ExecutionEntity executionEntity10 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("a10-model");
-        ActivityImpl initial10 = executionEntity10.getActivity();
-        System.out.println(RamUsageEstimator.sizeOf(initial10));
-        System.out.println(RamUsageEstimator.humanSizeOf(initial10));
-
-        //计算模型11 RAM
-        System.out.println("model 11 ram test");
-        ExecutionEntity executionEntity11 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("a11-model");
-        ActivityImpl initial11 = executionEntity11.getActivity();
-        System.out.println(RamUsageEstimator.sizeOf(initial11));
-        System.out.println(RamUsageEstimator.humanSizeOf(initial11));
+        System.out.println("processDefinitionEntity");
+        ProcessEngineConfigurationImpl processEngineConfiguration1 = (ProcessEngineConfigurationImpl) processEngine.getProcessEngineConfiguration();
+        DeploymentManager deploymentManager = processEngineConfiguration1.getDeploymentManager();
+        DefaultDeploymentCache<ProcessDefinitionEntity> defaultDeploymentCache = (DefaultDeploymentCache) deploymentManager.getProcessDefinitionCache();
+        ProcessDefinitionEntity processDefinitionEntity = defaultDeploymentCache.get("online-shopping:1000:8920");
+        System.out.println(processDefinitionEntity);
+        System.out.println("cache: " + RamUsageEstimator.sizeOf(defaultDeploymentCache));
+        System.out.println(RamUsageEstimator.sizeOf(processDefinitionEntity));
+        System.out.println(RamUsageEstimator.humanSizeOf(processDefinitionEntity));
+//        //计算模型2 RAM
+//        System.out.println("model 2 ram test");
+//        ExecutionEntity executionEntity2 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("load-application");
+//        ActivityImpl initial2 = executionEntity2.getActivity();
+//        System.out.println(RamUsageEstimator.sizeOf(initial2));
+//        System.out.println(RamUsageEstimator.humanSizeOf(initial2));
+//
+//        //计算模型3 RAM
+//        System.out.println("model 3 ram test");
+//        ExecutionEntity executionEntity3 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("leave-process");
+//        ActivityImpl initial3 = executionEntity3.getActivity();
+//        System.out.println(RamUsageEstimator.sizeOf(initial3));
+//        System.out.println(RamUsageEstimator.humanSizeOf(initial3));
+//
+//        //计算模型4 RAM
+//        System.out.println("model 4 ram test");
+//        ExecutionEntity executionEntity4 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("a4-model");
+//        ActivityImpl initial4 = executionEntity4.getActivity();
+//        System.out.println(RamUsageEstimator.sizeOf(initial4));
+//        System.out.println(RamUsageEstimator.humanSizeOf(initial4));
+//
+//        //计算模型5 RAM
+//        System.out.println("model 5 ram test");
+//        ExecutionEntity executionEntity5 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("a5-model");
+//        ActivityImpl initial5 = executionEntity5.getActivity();
+//        System.out.println(RamUsageEstimator.sizeOf(initial5));
+//        System.out.println(RamUsageEstimator.humanSizeOf(initial5));
+//
+//        //计算模型6 RAM
+//        System.out.println("model 6 ram test");
+//        ExecutionEntity executionEntity6 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("a6-model");
+//        ActivityImpl initial6 = executionEntity6.getActivity();
+//        System.out.println(RamUsageEstimator.sizeOf(initial6));
+//        System.out.println(RamUsageEstimator.humanSizeOf(initial6));
+//
+//        //计算模型7 RAM
+//        System.out.println("model 7 ram test");
+//        ExecutionEntity executionEntity7 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("a7-model");
+//        ActivityImpl initial7 = executionEntity7.getActivity();
+//        System.out.println(RamUsageEstimator.sizeOf(initial7));
+//        System.out.println(RamUsageEstimator.humanSizeOf(initial7));
+//
+//        //计算模型8 RAM
+//        System.out.println("model 8 ram test");
+//        ExecutionEntity executionEntity8 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("a8-model");
+//        ActivityImpl initial8 = executionEntity8.getActivity();
+//        System.out.println(RamUsageEstimator.sizeOf(initial8));
+//        System.out.println(RamUsageEstimator.humanSizeOf(initial8));
+//
+//        //计算模型9 RAM
+//        System.out.println("model 9 ram test");
+//        ExecutionEntity executionEntity9 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("a9-model");
+//        ActivityImpl initial9 = executionEntity9.getActivity();
+//        System.out.println(RamUsageEstimator.sizeOf(initial9));
+//        System.out.println(RamUsageEstimator.humanSizeOf(initial9));
+//
+//        //计算模型10 RAM
+//        System.out.println("model 10 ram test");
+//        ExecutionEntity executionEntity10 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("a10-model");
+//        ActivityImpl initial10 = executionEntity10.getActivity();
+//        System.out.println(RamUsageEstimator.sizeOf(initial10));
+//        System.out.println(RamUsageEstimator.humanSizeOf(initial10));
+//
+//        //计算模型11 RAM
+//        System.out.println("model 11 ram test");
+//        ExecutionEntity executionEntity11 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("a11-model");
+//        ActivityImpl initial11 = executionEntity11.getActivity();
+//        System.out.println(RamUsageEstimator.sizeOf(initial11));
+//        System.out.println(RamUsageEstimator.humanSizeOf(initial11));
 
     }
 

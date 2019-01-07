@@ -7,7 +7,7 @@ import scala.concurrent.duration._
 object Process_OnlineShoppingModel {
     var contentType = Map("Content-Type" -> "application/x-www-form-urlencoded")
     var workflow = exec { session =>
-            session.set("processDefinitionId", "online-shopping:100:400")
+            session.set("processDefinitionId", "online-shopping:10:40")
         }
         .exec(http("startProcessInstanceById")
             .post("/startProcessInstanceById/${processDefinitionId}")
