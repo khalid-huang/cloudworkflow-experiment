@@ -14,7 +14,7 @@ import org.sysu.processexecutionservice.admission.rule.IRule;
 import javax.annotation.PostConstruct;
 import java.util.concurrent.*;
 
-@Component
+//@Component
 public class ActivitiExecuteAdmissionor implements IAdmissionor {
 
 //    每个时间片的长度

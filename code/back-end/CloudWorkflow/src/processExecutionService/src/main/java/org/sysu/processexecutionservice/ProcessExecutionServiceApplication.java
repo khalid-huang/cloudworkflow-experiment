@@ -40,12 +40,12 @@ public class ProcessExecutionServiceApplication {
         return new RestTemplate();
     }
 
-    @Bean
-    public IRule myRule() {
-        //比较的三种rule
-//        return new RandomRule();
-//        return new BestAvailableRule();
-        return new ActivitiRule();
-    }
+//    @Bean
+//    public IRule myRule() {
+//        //比较的三种rule
+////        return new RandomRule();
+////        return new BestAvailableRule();
+//        return new ActivitiRule();
+//    }
 
 }
