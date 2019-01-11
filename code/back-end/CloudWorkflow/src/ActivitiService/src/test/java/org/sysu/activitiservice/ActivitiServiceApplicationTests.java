@@ -70,6 +70,14 @@ public class ActivitiServiceApplicationTests {
 
     }
 
+//    @Test
+    public void testEngineConfig() {
+        ProcessInstance processInstance = runtimeService.startProcessInstanceById("online-shopping:1000:623060");
+        ProcessInstance processInstance1 = runtimeService.startProcessInstanceById("online-shopping:1001:623064");
+        ProcessInstance processInstance2 = runtimeService.startProcessInstanceById("online-shopping:1002:623068");
+        ProcessInstance processInstance3 = runtimeService.startProcessInstanceById("online-shopping:1000:623060");
+
+    }
 
 //    @Test
     public void contextDeploy() {

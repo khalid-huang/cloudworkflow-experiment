@@ -1,17 +1,18 @@
 package org.sysu.activitiservice;
 
-import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
-import org.activiti.engine.impl.interceptor.CommandInterceptor;
-import org.activiti.spring.SpringProcessEngineConfiguration;
+import org.activiti.engine.RepositoryService;
+import org.activiti.engine.RuntimeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.data.repository.support.Repositories;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import javax.annotation.PostConstruct;
 
 @SpringBootApplication
 //@EnableEurekaClient
@@ -20,9 +21,17 @@ import org.springframework.web.filter.CorsFilter;
 })
 public class ActivitiServiceApplication {
 
+    @Autowired
+    RuntimeService runtimeService;
+
+    @Autowired
+    RepositoryService repositoryService;
+
     public static void main(String[] args) {
         SpringApplication.run(ActivitiServiceApplication.class, args);
+        //预先启动一个流程实例，完成引擎的初始化工作
     }
+
 
 //    @Bean
 //    InitializingBean usersAndGroupsInitializer(final IdentityService identityService) {

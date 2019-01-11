@@ -1,0 +1,12 @@
+RUN	activitiadmissiondatabase.ProcessTestWithRTLSimulation21	processtestwithrtlsimulation21	1547179695740	 	3.0.1.1
+USER	auto online shopping2	1	START	1547179697270	1547179697270
+REQUEST	1		startProcessInstanceById	1547179697297	1547179698150	OK	 
+REQUEST	1		getCurrentSingleTask	1547179698257	1547179698355	OK	 
+ERROR	completeTask: Failed to build request: No attribute named 'processDefinitionId' is defined 	1547179700279
+REQUEST	1		getCurrentSingleTask	1547179700289	1547179700325	OK	 
+ERROR	completeTask: Failed to build request: No attribute named 'processDefinitionId' is defined 	1547179701327
+REQUEST	1		getCurrentSingleTask	1547179701329	1547179701353	OK	 
+ERROR	completeTask: Failed to build request: No attribute named 'processDefinitionId' is defined 	1547179703348
+REQUEST	1		getCurrentSingleTask	1547179703349	1547179703371	OK	 
+ERROR	completeTask: Failed to build request: No attribute named 'processDefinitionId' is defined 	1547179704368
+USER	auto online shopping2	1	END	1547179697270	1547179704371

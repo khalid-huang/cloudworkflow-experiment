@@ -8,7 +8,7 @@ import activitidatabase.process._
 class ProcessTestSimulation extends 
 Simulation {
 	val httpConf = http
-		.baseUrl("http://localhost:8771/")
+		.baseUrl("http://localhost:8763/")
 	
 	def basictest() {
 		var contentType = Map("Content-Type" -> "application/x-www-form-urlencoded")
