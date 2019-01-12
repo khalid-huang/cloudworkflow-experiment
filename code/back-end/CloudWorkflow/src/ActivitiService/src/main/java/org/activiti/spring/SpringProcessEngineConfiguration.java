@@ -34,7 +34,7 @@ public class SpringProcessEngineConfiguration extends ProcessEngineConfiguration
     private Collection<AutoDeploymentStrategy> deploymentStrategies = new ArrayList();
 
     public SpringProcessEngineConfiguration() {
-        super.setProcessDefinitionCacheLimit(40);
+        super.setProcessDefinitionCacheLimit(20);
         this.transactionsExternallyManaged = true;
         this.deploymentStrategies.add(new DefaultAutoDeploymentStrategy());
         this.deploymentStrategies.add(new SingleResourceAutoDeploymentStrategy());

@@ -38,7 +38,7 @@ public class DefaultDeploymentCache<T> implements DeploymentCache<T> {
 //        System.out.println("DefaultDeploymentCache++" + " " + limit);
         if (limit > 0) {
             DefaultDeploymentCache.Task task = new DefaultDeploymentCache.Task();
-            scheduledThreadPoolExecutor.scheduleAtFixedRate(task, 0, 3, TimeUnit.SECONDS);
+            scheduledThreadPoolExecutor.scheduleAtFixedRate(task, 0, 5, TimeUnit.SECONDS);
 
             this.cache = Collections.synchronizedMap(new LinkedHashMap<String, T>(limit + 1, 0.75f, true) { // +1 is needed, because the entry is inserted first, before it is removed
                 // 0.75 is the default (see javadocs)

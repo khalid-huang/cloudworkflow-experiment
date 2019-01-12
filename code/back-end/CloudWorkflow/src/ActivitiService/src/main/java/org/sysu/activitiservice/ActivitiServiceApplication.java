@@ -11,11 +11,11 @@ import org.springframework.data.repository.support.Repositories;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.sysu.activitiservice.runner.StartupRunner;
 
 import javax.annotation.PostConstruct;
 
 @SpringBootApplication
-//@EnableEurekaClient
 @EnableAutoConfiguration(exclude = {
         org.activiti.spring.boot.SecurityAutoConfiguration.class
 })
@@ -30,6 +30,11 @@ public class ActivitiServiceApplication {
     public static void main(String[] args) {
         SpringApplication.run(ActivitiServiceApplication.class, args);
         //预先启动一个流程实例，完成引擎的初始化工作
+    }
+
+    @Bean
+    public StartupRunner startupRunner() {
+        return new StartupRunner();
     }
 
 
