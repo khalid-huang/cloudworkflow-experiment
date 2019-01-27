@@ -12,9 +12,9 @@ object Process_AddPD_OnlineShoppingModel {
     var feeder1 = csv("act_re_procdef_1.csv").circular  //包含1个话中实例定义
     var feeder20 = csv("act_re_procdef_20.csv").circular //包含20个流程实例定义 
     var feeder30 = csv("act_re_procdef_30.csv").circular //包含20个流程实例定义 
-    
+    var feeder = csv("act_re_procdef.csv").circular
 
-    var workflow = feed(feeder30)
+    var workflow = feed(feeder)
 		.exec(http("startProcessInstanceById")
             .post("/startProcessInstanceById/${processDefinitionId}")
             .headers(contentType)
